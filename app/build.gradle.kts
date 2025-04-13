@@ -87,4 +87,7 @@ dependencies {
     // Views/Fragments integration
     implementation("androidx.navigation:navigation-fragment:$navVersion")
     implementation("androidx.navigation:navigation-ui:$navVersion")
+
+    // Icons
+    implementation("androidx.compose.material:material-icons-core")
 }
