@@ -1,14 +1,13 @@
 package org.classapp.sleepwell
 
-import androidx.compose.material3.Text
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-
+import androidx.compose.ui.platform.LocalContext
 
 sealed class AuthScreen(val route: String) {
     data object SignIn : AuthScreen("sign_in")
@@ -19,6 +18,7 @@ sealed class AuthScreen(val route: String) {
 fun AuthNavigation() {
     val navController = rememberNavController()
     val authStatus = remember { mutableStateOf("Waiting for authentication...") }
+    val context = LocalContext.current
 
     NavHost(navController = navController, startDestination = AuthScreen.SignIn.route) {
         composable(AuthScreen.SignIn.route) {
@@ -46,6 +46,5 @@ fun AuthNavigation() {
             HomeScreen()
         }
     }
-
-    Text(text = authStatus.value, color = Color.Red)
+    Toast.makeText(context, authStatus.value, Toast.LENGTH_LONG).show()
 }
