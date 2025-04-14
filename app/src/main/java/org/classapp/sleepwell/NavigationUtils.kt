@@ -6,10 +6,6 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph
-import androidx.navigation.compose.composable
-import androidx.navigation.createGraph
 
 @Composable
 fun getHistoryIcon(): ImageVector {
@@ -33,29 +29,29 @@ fun getNavigationItems(): List<NavigationItem> {
         NavigationItem(
             title = "Home",
             icon = Icons.Outlined.Home,
-            route = Screen.Home.route
+            route = AppScreen.Home.route
         ),
         NavigationItem(
             title = "History",
             icon = getHistoryIcon(),
-            route = Screen.History.route
+            route = AppScreen.History.route
         ),
         NavigationItem(
             title = "Analytics",
             icon = getAnalyticsIcon(),
-            route = Screen.Analytics.route
+            route = AppScreen.Analytics.route
         ),
         NavigationItem(
             title = "Profile",
             icon = Icons.Outlined.Person,
-            route = Screen.Profile.route
+            route = AppScreen.Profile.route
         )
     )
 }
 
-sealed class Screen(val route: String) {
-    data object Home: Screen("home_screen")
-    data object History: Screen("profile_screen")
-    data object Analytics: Screen("cart_screen")
-    data object Profile: Screen("setting_screen")
+sealed class AppScreen(val route: String) {
+    data object Home: AppScreen("home_screen")
+    data object History: AppScreen("profile_screen")
+    data object Analytics: AppScreen("cart_screen")
+    data object Profile: AppScreen("setting_screen")
 }

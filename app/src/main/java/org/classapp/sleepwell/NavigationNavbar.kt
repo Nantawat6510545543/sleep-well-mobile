@@ -23,18 +23,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 
+
 fun createNavGraph(navController: NavController): NavGraph {
-    return navController.createGraph(startDestination = Screen.Home.route) {
-        composable(route = Screen.Home.route) {
+    return navController.createGraph(startDestination = AppScreen.Home.route) {
+        composable(route = AppScreen.Home.route) {
             HomeScreen()
         }
-        composable(route = Screen.History.route) {
+        composable(route = AppScreen.History.route) {
             HistoryScreen()
         }
-        composable(route = Screen.Analytics.route) {
+        composable(route = AppScreen.Analytics.route) {
             AnalyticsScreen()
         }
-        composable(route = Screen.Profile.route) {
+        composable(route = AppScreen.Profile.route) {
             ProfileScreen()
         }
     }
