@@ -1,8 +1,8 @@
 package org.classapp.sleepwell
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -32,7 +32,7 @@ fun getNavigationItems(): List<NavigationItem> {
     return listOf(
         NavigationItem(
             title = "Home",
-            icon = Icons.Filled.Home,
+            icon = Icons.Outlined.Home,
             route = Screen.Home.route
         ),
         NavigationItem(
@@ -47,7 +47,7 @@ fun getNavigationItems(): List<NavigationItem> {
         ),
         NavigationItem(
             title = "Profile",
-            icon = Icons.Filled.Person,
+            icon = Icons.Outlined.Person,
             route = Screen.Profile.route
         )
     )
@@ -58,21 +58,4 @@ sealed class Screen(val route: String) {
     data object History: Screen("profile_screen")
     data object Analytics: Screen("cart_screen")
     data object Profile: Screen("setting_screen")
-}
-
-fun createNavGraph(navController: NavController): NavGraph {
-    return navController.createGraph(startDestination = Screen.Home.route) {
-        composable(route = Screen.Home.route) {
-            HomeScreen()
-        }
-        composable(route = Screen.History.route) {
-            HistoryScreen()
-        }
-        composable(route = Screen.Analytics.route) {
-            AnalyticsScreen()
-        }
-        composable(route = Screen.Profile.route) {
-            ProfileScreen()
-        }
-    }
 }

@@ -17,8 +17,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.createGraph
+
+fun createNavGraph(navController: NavController): NavGraph {
+    return navController.createGraph(startDestination = Screen.Home.route) {
+        composable(route = Screen.Home.route) {
+            HomeScreen()
+        }
+        composable(route = Screen.History.route) {
+            HistoryScreen()
+        }
+        composable(route = Screen.Analytics.route) {
+            AnalyticsScreen()
+        }
+        composable(route = Screen.Profile.route) {
+            ProfileScreen()
+        }
+    }
+}
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
@@ -41,15 +61,13 @@ fun BottomNavigationBar(navController: NavController) {
                     Text(
                         item.title,
                         color = if (index == selectedItemIndex)
-                            Color.Black
-                        else Color.Gray
+                            Color.Black else Color.Gray
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.surface,
                     indicatorColor = MaterialTheme.colorScheme.primary
                 )
-
             )
         }
     }
