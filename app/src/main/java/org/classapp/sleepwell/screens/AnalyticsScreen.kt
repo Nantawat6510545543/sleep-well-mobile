@@ -1,11 +1,11 @@
-package org.classapp.sleepwell
+package org.classapp.sleepwell.screens
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun ProfileScreen() {
+fun AnalyticsScreen() {
     Text(
-        text = "Profile Screen",
+        text = "Analytics Screen",
     )
 }

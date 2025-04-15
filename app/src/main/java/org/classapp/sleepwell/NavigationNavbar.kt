@@ -1,45 +1,19 @@
 package org.classapp.sleepwell
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.createGraph
-
-
-fun createNavGraph(navController: NavController): NavGraph {
-    return navController.createGraph(startDestination = AppScreen.Home.route) {
-        composable(route = AppScreen.Home.route) {
-            HomeScreen()
-        }
-        composable(route = AppScreen.History.route) {
-            HistoryScreen()
-        }
-        composable(route = AppScreen.Analytics.route) {
-            AnalyticsScreen()
-        }
-        composable(route = AppScreen.Profile.route) {
-            ProfileScreen()
-        }
-    }
-}
+import org.classapp.sleepwell.navigation.getNavigationItems
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
@@ -71,22 +45,5 @@ fun BottomNavigationBar(navController: NavController) {
                 )
             )
         }
-    }
-}
-
-@Composable
-fun MainScreen() {
-    val navController = rememberNavController()
-
-    Scaffold (
-        modifier = Modifier.fillMaxSize(),
-        bottomBar = { BottomNavigationBar(navController) }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            graph = createNavGraph(navController),
-            modifier = Modifier.padding(innerPadding)
-        )
-
     }
 }

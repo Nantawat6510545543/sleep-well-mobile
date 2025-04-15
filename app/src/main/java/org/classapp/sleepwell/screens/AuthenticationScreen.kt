@@ -1,4 +1,4 @@
-package org.classapp.sleepwell
+package org.classapp.sleepwell.screens
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.runtime.Composable

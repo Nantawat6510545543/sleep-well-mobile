@@ -1,4 +1,4 @@
-package org.classapp.sleepwell
+package org.classapp.sleepwell.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
@@ -6,6 +6,7 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import org.classapp.sleepwell.R
 
 @Composable
 fun getHistoryIcon(): ImageVector {
@@ -29,29 +30,22 @@ fun getNavigationItems(): List<NavigationItem> {
         NavigationItem(
             title = "Home",
             icon = Icons.Outlined.Home,
-            route = AppScreen.Home.route
+            route = Routes.HOME
         ),
         NavigationItem(
             title = "History",
             icon = getHistoryIcon(),
-            route = AppScreen.History.route
+            route = Routes.HISTORY
         ),
         NavigationItem(
             title = "Analytics",
             icon = getAnalyticsIcon(),
-            route = AppScreen.Analytics.route
+            route = Routes.ANALYTICS
         ),
         NavigationItem(
             title = "Profile",
             icon = Icons.Outlined.Person,
-            route = AppScreen.Profile.route
+            route = Routes.PROFILE
         )
     )
-}
-
-sealed class AppScreen(val route: String) {
-    data object Home: AppScreen("home_screen")
-    data object History: AppScreen("profile_screen")
-    data object Analytics: AppScreen("cart_screen")
-    data object Profile: AppScreen("setting_screen")
 }
