@@ -7,4 +7,6 @@ object Routes {
     const val HISTORY = "history_screen"
     const val ANALYTICS = "analytics_screen"
     const val PROFILE = "profile_screen"
+    const val HISTORY_DETAILS = "history_details"
+    const val ADD_SLEEP_HISTORY = "add_sleep_history"
 }

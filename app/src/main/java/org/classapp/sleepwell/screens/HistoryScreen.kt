@@ -22,11 +22,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import org.classapp.sleepwell.navigation.Routes
 
 data class SleepData(
+    val id: String,
     val bedtime: Timestamp = Timestamp.now(),
     val comment: String = "",
     val duration: Number = 0,
@@ -34,7 +37,7 @@ data class SleepData(
 )
 
 @Composable
-fun HistoryScreen() {
+fun HistoryScreen(navController: NavController) {
     val sleepList = remember { mutableStateListOf<SleepData>() }
 
     LaunchedEffect(Unit) {
@@ -48,7 +51,7 @@ fun HistoryScreen() {
                 .addOnSuccessListener { result ->
                     for (document in result) {
                         val data = document.data
-
+                        val id = document.id
                         val bedtime = data["bedtime"] as? Timestamp ?: Timestamp.now()
                         val duration = (data["duration"] as? Number) ?: 0
                         val sleepScore = (data["sleepScore"] as? Number) ?: 0
@@ -56,6 +59,7 @@ fun HistoryScreen() {
 
                         sleepList.add(
                             SleepData(
+                                id = id,
                                 bedtime = bedtime,
                                 duration = duration,
                                 sleepScore = sleepScore,
@@ -85,13 +89,14 @@ fun HistoryScreen() {
 
             LazyColumn {
                 items(sleepList) { sleep ->
-                    SleepListItem(sleep)
+                    SleepListItem(navController, sleep)
                 }
             }
         }
-
         Button(
-            onClick = { /* TODO: Add action */ },
+            onClick = {
+                navController.navigate(Routes.ADD_SLEEP_HISTORY)
+            },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(16.dp)
@@ -102,7 +107,7 @@ fun HistoryScreen() {
 }
 
 @Composable
-fun SleepListItem(sleep: SleepData) {
+fun SleepListItem(navController: NavController, sleep: SleepData) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -112,13 +117,16 @@ fun SleepListItem(sleep: SleepData) {
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = "id: ${sleep.id}")
             Text(text = "Bedtime: ${sleep.bedtime.toDate()}")
             Text(text = "Comment: ${sleep.comment}")
             Text(text = "Duration: ${sleep.duration} hours")
             Text(text = "Sleep Score: ${sleep.sleepScore}")
             Spacer(modifier = Modifier.padding(top = 8.dp))
             Button(
-                onClick = { /* TODO: Add action here */ },
+                onClick = {
+                    navController.navigate("${Routes.HISTORY_DETAILS}/${sleep.id}")
+                },
                 modifier = Modifier
                     .defaultMinSize(minWidth = 1.dp)
                     .wrapContentWidth()
