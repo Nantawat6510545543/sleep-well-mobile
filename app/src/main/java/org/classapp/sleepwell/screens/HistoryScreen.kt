@@ -19,7 +19,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -70,15 +72,24 @@ fun HistoryScreen() {
         }
     }
 
+
     Box(modifier = Modifier.fillMaxSize()) {
-        // Sleep log list
-        LazyColumn(modifier = Modifier.fillMaxSize().padding(bottom = 80.dp)) {
-            items(sleepList) { sleep ->
-                SleepListItem(sleep)
+        Column(modifier = Modifier.fillMaxSize().padding(bottom = 80.dp)) {
+            Text(
+                text = "History Log",
+                modifier = Modifier.padding(16.dp),
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+
+            LazyColumn {
+                items(sleepList) { sleep ->
+                    SleepListItem(sleep)
+                }
             }
         }
 
-        // Add sleep log button
         Button(
             onClick = { /* TODO: Add action */ },
             modifier = Modifier

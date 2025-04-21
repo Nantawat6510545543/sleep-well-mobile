@@ -72,15 +72,11 @@ dependencies {
     // such as input and measurement/layout
     implementation("androidx.compose.ui:ui")
 
-    // Android Studio Preview support
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-
     // UI Tests
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    // Optional - Integration with activities
+    // Integration with activities
     implementation("androidx.activity:activity-compose:1.10.0")
 
     val navVersion = "2.8.9"
@@ -94,4 +90,7 @@ dependencies {
 
     // Icons
     implementation("androidx.compose.material:material-icons-core")
+
+    // Coil Image Loading Library
+    implementation("io.coil-kt.coil3:coil-compose:3.1.0")
 }
