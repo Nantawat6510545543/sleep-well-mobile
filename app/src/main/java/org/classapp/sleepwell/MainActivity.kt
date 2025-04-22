@@ -3,7 +3,7 @@ package org.classapp.sleepwell
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import org.classapp.sleepwell.navigation.AppNavGraph
+import org.classapp.sleepwell.navigations.AppNavGraph
 
 
 class MainActivity : ComponentActivity() {

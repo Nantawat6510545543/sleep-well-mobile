@@ -1,4 +1,4 @@
-package org.classapp.sleepwell.navigation
+package org.classapp.sleepwell.navigations
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder

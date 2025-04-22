@@ -1,4 +1,4 @@
-package org.classapp.sleepwell.navigation
+package org.classapp.sleepwell.navigations
 
 object Routes {
     const val SIGN_IN = "sign_in"

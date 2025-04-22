@@ -13,7 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
-import org.classapp.sleepwell.navigation.getNavigationItems
+import org.classapp.sleepwell.utils.getNavigationItems
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {

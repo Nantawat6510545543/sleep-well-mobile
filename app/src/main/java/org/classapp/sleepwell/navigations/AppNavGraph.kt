@@ -1,4 +1,4 @@
-package org.classapp.sleepwell.navigation
+package org.classapp.sleepwell.navigations
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost

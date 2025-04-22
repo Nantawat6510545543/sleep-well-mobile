@@ -1,4 +1,4 @@
-package org.classapp.sleepwell.navigation
+package org.classapp.sleepwell.navigations
 
 import android.app.Activity
 import android.widget.Toast

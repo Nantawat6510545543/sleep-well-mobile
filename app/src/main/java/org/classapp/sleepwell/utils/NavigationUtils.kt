@@ -1,4 +1,4 @@
-package org.classapp.sleepwell.navigation
+package org.classapp.sleepwell.utils
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import org.classapp.sleepwell.R
+import org.classapp.sleepwell.navigations.Routes
 
 @Composable
 fun getHistoryIcon(): ImageVector {

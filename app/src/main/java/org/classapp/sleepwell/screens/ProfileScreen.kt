@@ -1,10 +1,7 @@
 package org.classapp.sleepwell.screens
 
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -14,9 +11,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil3.compose.AsyncImage
 import com.google.firebase.auth.FirebaseAuth
-import org.classapp.sleepwell.navigation.Routes
+import org.classapp.sleepwell.navigations.Routes
 
 @Composable
 fun ProfileScreen(navController: NavController) {

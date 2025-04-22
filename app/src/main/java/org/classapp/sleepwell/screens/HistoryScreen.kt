@@ -1,3 +1,5 @@
+package org.classapp.sleepwell.screens
+
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,7 +28,7 @@ import androidx.navigation.NavController
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import org.classapp.sleepwell.navigation.Routes
+import org.classapp.sleepwell.navigations.Routes
 
 data class SleepData(
     val id: String,

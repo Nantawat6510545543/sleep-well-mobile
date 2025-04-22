@@ -1,7 +1,5 @@
 package org.classapp.sleepwell.screens
 
-import HistoryDetailsScreen
-import HistoryScreen
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -14,7 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import org.classapp.sleepwell.BottomNavigationBar
-import org.classapp.sleepwell.navigation.Routes
+import org.classapp.sleepwell.navigations.Routes
 
 // Note: navController for Auth, innerNavController for Main
 @Composable
