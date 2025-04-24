@@ -1,3 +1,13 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+val secretsFile = rootProject.file("secrets.properties")
+val secrets = Properties().apply {
+    if (secretsFile.exists()) {
+        load(FileInputStream(secretsFile)) // ✅ Correct usage
+    }
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -17,8 +27,14 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField(
+            "String",
+            "WEATHER_API_KEY",
+            "\"${secrets["WEATHER_API_KEY"]}\""
+        )
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     buildTypes {
@@ -94,4 +110,9 @@ dependencies {
 
     // Coil Image Loading Library
     implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+
+    // Retrofit HTTP client
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    // Gson deserializer
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 }

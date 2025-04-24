@@ -2,8 +2,9 @@
 .gradle/
 build/
 
-# Local configuration files
+# Local & Secret configuration files
 local.properties
+secrets.properties
 
 # Android Studio and IntelliJ IDEA files
 .idea/
