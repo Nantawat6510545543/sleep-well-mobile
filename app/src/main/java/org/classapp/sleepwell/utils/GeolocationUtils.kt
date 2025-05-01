@@ -21,11 +21,11 @@ import kotlinx.coroutines.tasks.await
 fun rememberLocation(): Location? {
     val context = LocalContext.current
     var location by remember { mutableStateOf<Location?>(null) }
-    var hasPermission by remember { mutableStateOf(false) }
+    var hasGeoPermission by remember { mutableStateOf(false) }
 
-    val permissionLauncher = rememberLauncherForActivityResult(
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
-        onResult = { granted -> hasPermission = granted }
+        onResult = { granted -> hasGeoPermission = granted }
     )
 
     // Check permission once on composition
@@ -36,15 +36,15 @@ fun rememberLocation(): Location? {
         ) == PackageManager.PERMISSION_GRANTED
 
         if (granted) {
-            hasPermission = true
+            hasGeoPermission = true
         } else {
-            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
 
     // Fetch location if permission granted
-    LaunchedEffect(hasPermission) {
-        if (hasPermission) {
+    LaunchedEffect(hasGeoPermission) {
+        if (hasGeoPermission) {
             try {
                 val fusedClient = LocationServices.getFusedLocationProviderClient(context)
                 location = fusedClient.getCurrentLocation(

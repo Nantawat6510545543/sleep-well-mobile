@@ -2,12 +2,6 @@ package org.classapp.sleepwell.utils
 
 import android.location.Location
 import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -80,7 +74,7 @@ fun createWeatherApi(): WeatherApiService {
 suspend fun fetchWeatherResponse(location: Location): WeatherApiResponse? {
     val weatherApiKey = BuildConfig.WEATHER_API_KEY
 
-    if (weatherApiKey.isNullOrEmpty()) {
+    if (weatherApiKey.isEmpty()) {
         Log.e("WeatherAPI", "API key is null or empty")
         return null
     }
