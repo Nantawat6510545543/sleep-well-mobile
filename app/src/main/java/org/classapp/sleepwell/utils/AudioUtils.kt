@@ -1,38 +1,17 @@
 package org.classapp.sleepwell.utils
 
-import android.media.MediaRecorder
-import java.io.IOException
+import android.util.Log
 import kotlin.math.log10
+import kotlin.math.sqrt
 
-class AudioDecibelMeter {
-    private var mediaRecorder: MediaRecorder? = null
 
-    fun start() {
-        mediaRecorder = MediaRecorder().apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.DEFAULT)
-            setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT)
-            setOutputFile("/dev/null") // discard audio
-            try {
-                prepare()
-                start()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    fun getDecibels(): Int {
-        return mediaRecorder?.maxAmplitude?.let {
-            if (it > 0) (20 * log10(it.toDouble())).toInt() else 0
-        } ?: 0
-    }
-
-    fun stop() {
-        mediaRecorder?.apply {
-            stop()
-            release()
-        }
-        mediaRecorder = null
-    }
+fun computeDecibel(buffer: ShortArray, read: Int): Double {
+    if (read <= 0) return 0.0
+    val sumSquares = buffer.take(read).sumOf { (it * it).toDouble() }
+    val rms = sqrt(sumSquares / read)
+    val epsilon = 1e-6
+    val decibel = if (rms > epsilon) 20 * log10(rms) else 0.0
+    Log.d("AudioUtils", "RMS: $rms, dB: $decibel")
+    return decibel
 }
+

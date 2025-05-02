@@ -18,8 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import kotlin.math.log10
-import kotlin.math.sqrt
+import org.classapp.sleepwell.utils.computeDecibel
 
 @Composable
 fun DecibelMeterSection(audioPermissionGranted: Boolean) {
@@ -46,15 +45,10 @@ fun DecibelMeterSection(audioPermissionGranted: Boolean) {
 
                 while (true) {
                     val read = audioRecord.read(buffer, 0, bufSize)
-                    if (read > 0) {
-                        val sumSquares = buffer.take(read).sumOf { (it * it).toDouble() }
-                        val rms = sqrt(sumSquares / read)
-                        val epsilon = 1e-6
-                        decibel = if (rms > epsilon) 20 * log10(rms) else 0.0
-                        Log.d("DecibelMeter", "RMS: $rms, dB: $decibel") // Debug Print
-                    }
+                    decibel = computeDecibel(buffer, read)
                     delay(1000) // 1 update/sec
                 }
+
             } catch (e: SecurityException) {
                 Log.e("DecibelMeterSection", "Error recording audio")
             }
