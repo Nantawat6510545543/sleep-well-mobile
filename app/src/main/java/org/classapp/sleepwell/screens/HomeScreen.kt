@@ -1,11 +1,11 @@
 package org.classapp.sleepwell.screens
 
 import android.Manifest
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+//import androidx.compose.material.icons.Icons
+//import androidx.compose.material.icons.filled.Mic
+//import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -15,13 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import org.classapp.sleepwell.components.DecibelMeterSection
 import org.classapp.sleepwell.components.UserInfoSection
-import org.classapp.sleepwell.utils.FlattenedWeatherApiResponse
-import org.classapp.sleepwell.utils.getUserLocation
-import org.classapp.sleepwell.utils.fetchWeatherResponse
-import org.classapp.sleepwell.utils.flattenedWeatherResponse
-import org.classapp.sleepwell.utils.hasPermission
-import org.classapp.sleepwell.utils.requestPermission
-
+import org.classapp.sleepwell.utils.*
 
 @Composable
 fun HomeScreen() {
@@ -41,10 +35,13 @@ fun HomeScreen() {
     var weatherData by remember { mutableStateOf<FlattenedWeatherApiResponse?>(null) }
     val coroutineScope = rememberCoroutineScope()
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    var isRecording by remember { mutableStateOf(false) }
 
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         user?.let {
             UserInfoSection(user = it, location = location)
         }
@@ -52,7 +49,7 @@ fun HomeScreen() {
         Button(
             onClick = {
                 coroutineScope.launch {
-                   val weather = location?.let { fetchWeatherResponse(it) }
+                    val weather = location?.let { fetchWeatherResponse(it) }
                     weatherData = weather?.let { flattenedWeatherResponse(it) }
                 }
             }
@@ -60,11 +57,28 @@ fun HomeScreen() {
             Text("Get Weather")
         }
 
-        // Show weather data if available
         weatherData?.let {
             WeatherDisplay(weather = it)
         } ?: Text("No weather data available.", fontSize = 16.sp)
 
-        DecibelMeterSection(audioPermissionGranted)
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Start/Stop Recording Button with Icon
+        Button(
+            onClick = { isRecording = !isRecording },
+            enabled = audioPermissionGranted
+        ) {
+//            Icon(
+//                imageVector = if (isRecording) Icons.Filled.Stop else Icons.Filled.Mic,
+//                contentDescription = if (isRecording) "Stop Recording" else "Start Recording"
+//            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(if (isRecording) "Stop Recording" else "Start Recording")
+        }
+
+        DecibelMeterSection(
+            audioPermissionGranted = audioPermissionGranted,
+            recording = isRecording
+        )
     }
 }

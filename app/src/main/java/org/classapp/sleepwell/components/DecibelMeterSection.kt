@@ -14,21 +14,29 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import org.classapp.sleepwell.utils.computeDecibel
 
-@Composable
-fun DecibelMeterSection(audioPermissionGranted: Boolean) {
-    var decibel by remember { mutableDoubleStateOf(0.0) }
+fun computeAverageDecibel(values: List<Double>): Double {
+    return if (values.isNotEmpty()) values.average() else 0.0
+}
 
-    // TODO run in background + fix zero decibel bug
-    LaunchedEffect(audioPermissionGranted) {
+@Composable
+fun DecibelMeterSection(
+    audioPermissionGranted: Boolean,
+    recording: Boolean
+) {
+    var decibel by remember { mutableDoubleStateOf(0.0) }
+    val decibelHistory = remember { mutableStateListOf<Double>() }
+
+    // Start recording and calculating decibels
+    LaunchedEffect(recording) {
         if (audioPermissionGranted) {
             val sampleRate = 44100
-
             val bufSize = AudioRecord.getMinBufferSize(
                 sampleRate,
                 AudioFormat.CHANNEL_IN_MONO,
@@ -43,24 +51,44 @@ fun DecibelMeterSection(audioPermissionGranted: Boolean) {
                 val buffer = ShortArray(bufSize)
                 audioRecord.startRecording()
 
-                while (true) {
-                    val read = audioRecord.read(buffer, 0, bufSize)
-                    decibel = computeDecibel(buffer, read)
-                    delay(1000) // 1 update/sec
+                if (recording) {
+                    // Reset decibel history when recording starts
+                    decibelHistory.clear()
+                    Log.d("DecibelMeter", "Starting new recording session.")
                 }
 
+                // Loop to record audio and store decibels
+                while (recording) {
+                    val read = audioRecord.read(buffer, 0, bufSize)
+                    decibel = computeDecibel(buffer, read)
+                    decibelHistory.add(decibel)
+                    delay(1000) // Update decibel level every 1 second
+                }
+
+                // Once recording stops, stop the audio record
+                audioRecord.stop()
+                audioRecord.release()
+
+                // Log the average decibel after recording stops
+                val averageDecibel = computeAverageDecibel(decibelHistory)
+                Log.d("DecibelMeter", "Average Decibel: %.2f dB".format(averageDecibel))
+
             } catch (e: SecurityException) {
-                Log.e("DecibelMeterSection", "Error recording audio")
+                Log.e("DecibelMeterSection", "Error recording audio", e)
             }
         }
     }
 
-    // Displaying decibel level or waiting for permission
+    // Column to display current decibel during recording
     Column(modifier = Modifier.padding(16.dp)) {
         if (audioPermissionGranted) {
-            Text("Microphone permission granted. Decibel meter active.")
+            Text("Microphone permission granted. Decibel meter ready.")
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Current decibel level: %.2f dB".format(decibel))
+            if (recording) {
+                Text("Current decibel level: %.2f dB".format(decibel))
+            } else {
+                Text("Decibel meter is idle.")
+            }
         } else {
             Text("Waiting for microphone permission...")
         }

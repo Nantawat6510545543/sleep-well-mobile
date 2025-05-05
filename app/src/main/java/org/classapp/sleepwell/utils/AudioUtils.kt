@@ -11,7 +11,7 @@ fun computeDecibel(buffer: ShortArray, read: Int): Double {
     val rms = sqrt(sumSquares / read)
     val epsilon = 1e-6
     val decibel = if (rms > epsilon) 20 * log10(rms) else 0.0
-    Log.d("AudioUtils", "RMS: $rms, dB: $decibel")
+//    Log.d("AudioUtils", "RMS: $rms, dB: $decibel")
     return decibel
 }
 
