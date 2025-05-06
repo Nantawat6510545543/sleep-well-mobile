@@ -2,9 +2,6 @@ package org.classapp.sleepwell.screens
 
 import android.Manifest
 import androidx.compose.foundation.layout.*
-//import androidx.compose.material.icons.Icons
-//import androidx.compose.material.icons.filled.Mic
-//import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -68,10 +65,6 @@ fun HomeScreen() {
             onClick = { isRecording = !isRecording },
             enabled = audioPermissionGranted
         ) {
-//            Icon(
-//                imageVector = if (isRecording) Icons.Filled.Stop else Icons.Filled.Mic,
-//                contentDescription = if (isRecording) "Stop Recording" else "Start Recording"
-//            )
             Spacer(modifier = Modifier.width(8.dp))
             Text(if (isRecording) "Stop Recording" else "Start Recording")
         }
@@ -80,5 +73,7 @@ fun HomeScreen() {
             audioPermissionGranted = audioPermissionGranted,
             recording = isRecording
         )
+
+        SentimentSleepAnalysisScreen()
     }
 }

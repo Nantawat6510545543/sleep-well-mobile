@@ -4,7 +4,7 @@ import java.io.FileInputStream
 val secretsFile = rootProject.file("secrets.properties")
 val secrets = Properties().apply {
     if (secretsFile.exists()) {
-        load(FileInputStream(secretsFile)) // ✅ Correct usage
+        load(FileInputStream(secretsFile))
     }
 }
 
@@ -115,4 +115,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     // Gson deserializer
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+
+    // AI
+    implementation("com.microsoft.onnxruntime:onnxruntime-android:latest.release")
 }
