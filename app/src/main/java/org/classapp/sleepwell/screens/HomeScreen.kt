@@ -7,16 +7,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.launch
-import org.classapp.sleepwell.components.DecibelMeterSection
 import org.classapp.sleepwell.components.UserInfoSection
 import org.classapp.sleepwell.utils.*
 
 @Composable
 fun HomeScreen() {
-    val context = LocalContext.current
+//    val context = LocalContext.current
     requestPermission(
         listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -24,12 +21,8 @@ fun HomeScreen() {
         )
     )
 
-    val audioPermissionGranted = hasPermission(context, Manifest.permission.RECORD_AUDIO)
-
 //    val location = getUserLocation(locationPermissionGranted)
     val user = FirebaseAuth.getInstance().currentUser
-
-    var isRecording by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -39,20 +32,6 @@ fun HomeScreen() {
         user?.let { UserInfoSection(user = it) }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        // Start/Stop Recording Button with Icon
-        Button(
-            onClick = { isRecording = !isRecording },
-            enabled = audioPermissionGranted
-        ) {
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(if (isRecording) "Stop Recording" else "Start Recording")
-        }
-
-        DecibelMeterSection(
-            audioPermissionGranted = audioPermissionGranted,
-            recording = isRecording
-        )
 
         SentimentSleepAnalysisScreen()
     }

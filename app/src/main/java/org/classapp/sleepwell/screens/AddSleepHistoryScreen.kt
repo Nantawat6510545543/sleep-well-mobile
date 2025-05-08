@@ -1,6 +1,7 @@
 package org.classapp.sleepwell.screens
 
 import android.Manifest
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -11,19 +12,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import org.classapp.sleepwell.components.DateTimePickerButton
 import org.classapp.sleepwell.components.DateTimePickerDialog
-import org.classapp.sleepwell.utils.getUserLocation
+import org.classapp.sleepwell.components.DecibelMeterSection
 import org.classapp.sleepwell.utils.handleConfirmClick
 import org.classapp.sleepwell.utils.hasPermission
 import org.classapp.sleepwell.utils.validateSleepInput
 
 @Composable
-fun AddSleepHistoryScreen() {
+fun AddSleepHistoryScreen(navController: NavController) {
     var sleepDateTime by remember { mutableStateOf("Press here to pick date & time") }
     var sleepDuration by remember { mutableStateOf("") }
-    var sleepQuality by remember { mutableStateOf("") }
+    var sleepComment by remember { mutableStateOf("") }
     var showDateTimePicker by remember { mutableStateOf(false) }
 
     // for error handling
@@ -35,6 +37,11 @@ fun AddSleepHistoryScreen() {
     val coroutineScope = rememberCoroutineScope()
     val locationPermissionGranted = hasPermission(
         context, Manifest.permission.ACCESS_FINE_LOCATION)
+
+    var averageDecibel by remember { mutableStateOf<Double?>(null) }
+    var isRecording by remember { mutableStateOf(false) }
+
+    val audioPermissionGranted = hasPermission(context, Manifest.permission.RECORD_AUDIO)
 
     Column(
         modifier = Modifier
@@ -60,7 +67,7 @@ fun AddSleepHistoryScreen() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "How long did you sleep?")
+            Text(text = "How long did you sleep (hours)?")
             Spacer(modifier = Modifier.height(2.dp))
             OutlinedTextField(
                 value = sleepDuration,
@@ -74,14 +81,15 @@ fun AddSleepHistoryScreen() {
             Text(text = "How was your sleep?")
             Spacer(modifier = Modifier.height(2.dp))
             OutlinedTextField(
-                value = sleepQuality,
-                onValueChange = { sleepQuality = it },
+                value = sleepComment,
+                onValueChange = { sleepComment = it },
                 placeholder = { Text("Input text") },
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Data privacy checkbox
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
                     checked = consentChecked,
@@ -99,29 +107,61 @@ fun AddSleepHistoryScreen() {
             if (showValidationError) {
                 Spacer(modifier = Modifier.height(8.dp))  // Adds some space before the message
                 Text(
-                    text = validationMessage,  // The actual error message
-                    color = Color.Red,  // Error message color
-                    style = MaterialTheme.typography.bodySmall  // Text style for the message
+                    text = validationMessage,
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
         }
 
+        // Start/Stop Recording Button with Icon
+        Button(
+            onClick = { isRecording = !isRecording },
+            enabled = audioPermissionGranted
+        ) {
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                if (isRecording) "Stop Audio Recording"
+                else "Start Audio Recording"
+            )
+        }
+
+        DecibelMeterSection (
+            audioPermissionGranted = audioPermissionGranted,
+            recording = isRecording,
+            onAverageDecibelComputed = { average ->
+                averageDecibel = average
+            }
+        )
+
         Button(
             onClick = {
-                val result = validateSleepInput(sleepDateTime, sleepDuration, sleepQuality, consentChecked)
+                val result = validateSleepInput(
+                    sleepDate = sleepDateTime,
+                    duration = sleepDuration,
+                    sleepComment = sleepComment,
+                    consentChecked = consentChecked
+                )
                 if (!result.isValid) {
                     validationMessage = result.message
                     showValidationError = true
                 } else {
                     showValidationError = false
                     coroutineScope.launch {
-                        handleConfirmClick(
-                            context = context,
-                            dateTime = sleepDateTime,
-                            duration = sleepDuration,
-                            quality = sleepQuality,
-                            hasGeoPermission = locationPermissionGranted
-                        )
+                        averageDecibel?.let {
+                            handleConfirmClick(
+                                context = context,
+                                sleepDate = sleepDateTime,
+                                duration = sleepDuration,
+                                sleepComment = sleepComment,
+                                hasGeoPermission = locationPermissionGranted,
+                                averageDecibel = it
+                            )
+
+                            // Show success toast and navigate to HistoryScreen
+                            Toast.makeText(context, "Data added successfully", Toast.LENGTH_SHORT).show()
+                            navController.navigate("history_screen")
+                        }
                     }
                 }
             },

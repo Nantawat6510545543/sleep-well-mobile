@@ -55,7 +55,7 @@ data class FlattenedWeatherApiResponse(
     val timestamp: Long,
     val temp_c: Double,
     val condition_text: String,
-    val precip_mm: Double?,
+    val precip_mm: Double,
     val humidity: Int,
     val country: String,
     val location_name: String,

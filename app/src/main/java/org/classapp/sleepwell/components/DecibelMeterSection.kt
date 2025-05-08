@@ -28,7 +28,8 @@ fun computeAverageDecibel(values: List<Double>): Double {
 @Composable
 fun DecibelMeterSection(
     audioPermissionGranted: Boolean,
-    recording: Boolean
+    recording: Boolean,
+    onAverageDecibelComputed: (Double) -> Unit
 ) {
     var decibel by remember { mutableDoubleStateOf(0.0) }
     val decibelHistory = remember { mutableStateListOf<Double>() }
@@ -71,7 +72,7 @@ fun DecibelMeterSection(
 
                 // Log the average decibel after recording stops
                 val averageDecibel = computeAverageDecibel(decibelHistory)
-                Log.d("DecibelMeter", "Average Decibel: %.2f dB".format(averageDecibel))
+                onAverageDecibelComputed(averageDecibel)
 
             } catch (e: SecurityException) {
                 Log.e("DecibelMeterSection", "Error recording audio", e)
