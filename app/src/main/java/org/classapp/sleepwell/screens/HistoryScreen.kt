@@ -119,7 +119,7 @@ fun SleepListItem(navController: NavController, sleep: SleepData) {
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "id: ${sleep.id}")
+            Text(text = "Sleep ID: ${sleep.id}")
             Text(text = "Bedtime: ${sleep.bedtime.toDate()}")
             Text(text = "Comment: ${sleep.comment}")
             Text(text = "Duration: ${sleep.duration} hours")

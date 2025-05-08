@@ -16,18 +16,20 @@ data class ValidationResult(
 )
 
 data class SleepLog(
-    val userId: String,
-    val sleepDate: Timestamp,
-    val duration: Int,
-    val sleepComment: String,
-    val sleepScore: Int,
+    // Sleep
+    val userId: String = "",
+    val sleepDate: Timestamp = Timestamp.now(),
+    val duration: Int = 0,
+    val sleepComment: String = "",
+    val sleepScore: Double = 0.0,
 
-    val place: String,
-    val tempC: Double,
-    val humidity: Int,
-    val precip: Double,
-    val weatherCondition: String,
-    val noise: Double
+    // Weather
+    val place: String = "",
+    val tempC: Double = 0.0,
+    val humidity: Int = 0,
+    val precip: Double = 0.0,
+    val weatherCondition: String = "",
+    val noise: Double = 0.0
 )
 
 fun convertToTimestamp(sleepDate: String): Timestamp? {
@@ -90,7 +92,7 @@ suspend fun handleConfirmClick(
             duration = duration.toInt(),
             sleepComment = sleepComment,
             noise = averageDecibel,
-            sleepScore = 123,  // TODO: compute meaningful score
+            sleepScore = 123.4,  // TODO: compute meaningful score
             place = flattened.location_name,
             tempC = flattened.temp_c,
             humidity = flattened.humidity,

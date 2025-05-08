@@ -1,6 +1,5 @@
 package org.classapp.sleepwell.utils
 
-import android.util.Log
 import kotlin.math.log10
 import kotlin.math.sqrt
 

@@ -38,7 +38,7 @@ fun MainScreen(navController: NavController) {
             ) { backStackEntry ->
                 // Get the sleepId argument from the backStackEntry
                 val sleepId = backStackEntry.arguments?.getString("sleepId")
-                HistoryDetailsScreen(sleepId = sleepId)  // Pass sleepId to the composable
+                HistoryDetailsScreen(innerNavController, sleepId)  // Pass sleepId to the composable
             }
             composable(Routes.ADD_SLEEP_HISTORY) { AddSleepHistoryScreen(innerNavController) }
         }
