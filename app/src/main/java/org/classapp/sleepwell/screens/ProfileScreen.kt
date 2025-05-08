@@ -1,67 +1,80 @@
 package org.classapp.sleepwell.screens
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
+import org.classapp.sleepwell.components.EditableField
 import org.classapp.sleepwell.navigations.Routes
 import org.classapp.sleepwell.utils.ProfileImage
+import androidx.core.net.toUri
 
 @Composable
 fun ProfileScreen(navController: NavController) {
     val user = FirebaseAuth.getInstance().currentUser
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
-        // Title Text
         Text(
             text = "Your Profile",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            color = androidx.compose.ui.graphics.Color.Black,
+            color = Color.Black,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
         if (user != null) {
-            // TODO refactor
-            var age by remember { mutableStateOf<String?>(null) }
-            var height by remember { mutableStateOf<String?>(null) }
-            var weight by remember { mutableStateOf<String?>(null) }
-            var gender by remember { mutableStateOf<String?>(null) }
-
             val userId = user.uid
-            val displayName = user.displayName ?: "No Username"
             val email = user.email ?: "No Email"
 
+            // UI state
+            var username by remember { mutableStateOf(user.displayName ?: "") }
+            var age by remember { mutableStateOf<String?>(null) }
+            var gender by remember { mutableStateOf<String?>(null) }
+            var height by remember { mutableStateOf<String?>(null) }
+            var weight by remember { mutableStateOf<String?>(null) }
+            var photoUrl by remember { mutableStateOf(user.photoUrl?.toString()) }
+            var editMode by remember { mutableStateOf(false) }
+
+            // Optional: image picker for external hosted URLs
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.GetContent()
+            ) { uri: Uri? ->
+                uri?.let {
+                    // Use this as a temp way to preview new image
+                    photoUrl = it.toString()
+                }
+            }
+
+            // Load Firestore profile
             LaunchedEffect(userId) {
+                user.reload() // Refresh user profile from Firebase
                 val firestore = FirebaseFirestore.getInstance()
                 firestore.collection("profiles")
                     .document(userId)
                     .get()
                     .addOnSuccessListener { doc ->
-                        age = doc.get("age")?.toString()
-                        gender = doc.get("gender")?.toString()
-                        height = doc.get("height")?.toString()
-                        weight = doc.get("weight")?.toString()
+                        username = doc.getString("username") ?: username
+                        age = doc.getString("age")
+                        gender = doc.getString("gender")
+                        height = doc.getString("height")
+                        weight = doc.getString("weight")
+                        photoUrl = doc.getString("photoUrl") ?: photoUrl
                     }
             }
 
@@ -70,24 +83,81 @@ fun ProfileScreen(navController: NavController) {
                     .fillMaxWidth()
                     .wrapContentSize(Alignment.Center)
             ) {
-                ProfileImage(user.photoUrl.toString())
+                // Use the fresh photo URL from FirebaseAuth
+                ProfileImage(user.photoUrl?.toString())
             }
 
-            Text("User ID: $userId")
-            Text("Username: $displayName")
-            Text("Email: $email")
-            Text("Age: $age")
-            Text("Gender: $gender")
-            Text("Height: $height cm")
-            Text("Weight: $weight kg")
-            Button(onClick = {
-                FirebaseAuth.getInstance().signOut()
-                navController.navigate(Routes.SIGN_IN) {
-                    popUpTo(Routes.MAIN) { inclusive = true }
+            if (editMode) {
+                Button(onClick = { launcher.launch("image/*") }) {
+                    Text("Choose New Profile Picture")
                 }
-            }) {
-                Text("Logout")
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text("User ID: $userId", modifier = Modifier.padding(vertical = 4.dp))
+            Text("Email: $email", modifier = Modifier.padding(vertical = 4.dp))
+
+            EditableField("Username", username, editMode) { username = it }
+            EditableField("Age", age, editMode) { age = it }
+            EditableField("Gender", gender, editMode) { gender = it }
+            EditableField("Height", height, editMode) { height = it }
+            EditableField("Weight", weight, editMode) { weight = it }
+            EditableField("Photo URL", photoUrl, editMode) { photoUrl = it }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (editMode) {
+                    Button(onClick = {
+                        val firestore = FirebaseFirestore.getInstance()
+                        val profileUpdates = mapOf(
+                            "username" to username,
+                            "age" to age,
+                            "gender" to gender,
+                            "height" to height,
+                            "weight" to weight,
+                            "photoUrl" to photoUrl
+                        )
+
+                        firestore.collection("profiles").document(userId)
+                            .set(profileUpdates.filterValues { it != null }) // use set() to allow full overwrite
+                            .addOnSuccessListener {
+                                // Sync with Firebase Auth
+                                updateFirebaseAuthProfile(username, photoUrl)
+
+                                editMode = false
+                            }
+                    }) {
+                        Text("Save")
+                    }
+                } else {
+                    Button(onClick = { editMode = true }) {
+                        Text("Edit Info")
+                    }
+                }
+
+                Button(onClick = {
+                    FirebaseAuth.getInstance().signOut()
+                    navController.navigate(Routes.SIGN_IN) {
+                        popUpTo(Routes.MAIN) { inclusive = true }
+                    }
+                }) {
+                    Text("Logout")
+                }
             }
         }
     }
+}
+
+private fun updateFirebaseAuthProfile(username: String?, photoUrl: String?) {
+    val user = FirebaseAuth.getInstance().currentUser
+    val newPhotoUri = photoUrl?.toUri()
+
+    user?.updateProfile(
+        userProfileChangeRequest {
+            displayName = username
+            photoUri = newPhotoUri
+        }
+    )
 }
