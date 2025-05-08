@@ -1,8 +1,11 @@
 package org.classapp.sleepwell.screens
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -11,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -19,6 +23,7 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import org.classapp.sleepwell.navigations.Routes
+import org.classapp.sleepwell.utils.ProfileImage
 
 @Composable
 fun ProfileScreen(navController: NavController) {
@@ -60,13 +65,13 @@ fun ProfileScreen(navController: NavController) {
                     }
             }
 
-//            val photoUrl = user.photoUrl.toString()
-//            Log.d("DEBUG", photoUrl)
-//            // TODO add default profile picture
-//            AsyncImage(
-//                model = "https://lh3.googleusercontent.com/a/ACg8ocLTLMOkOFe3E1MNazpp_uh0w6H9YTtMWMgl674T8n5xxHHHDA=s96-c",
-//                contentDescription = "Your Profile Picture",
-//            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize(Alignment.Center)
+            ) {
+                ProfileImage(user.photoUrl.toString())
+            }
 
             Text("User ID: $userId")
             Text("Username: $displayName")
@@ -86,11 +91,3 @@ fun ProfileScreen(navController: NavController) {
         }
     }
 }
-//        if (photoUrl != null) {
-//            Image(
-//                painter = rememberAsyncImagePainter(photoUrl),
-//                contentDescription = "Profile Picture"
-//            )
-//        } else {
-//            Text(text = "No Profile Picture")
-//        }

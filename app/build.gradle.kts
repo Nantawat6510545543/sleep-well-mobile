@@ -110,6 +110,7 @@ dependencies {
 
     // Coil Image Loading Library
     implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.1.0")
 
     // Retrofit HTTP client
     implementation("com.squareup.retrofit2:retrofit:2.11.0")

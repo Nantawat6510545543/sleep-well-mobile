@@ -7,7 +7,7 @@ data class ValidationResult(
 
 data class SleepLog(
     val dateTime: String,
-    val duration: String,
+    val duration: Int,
     val quality: String,
 )
 
@@ -45,7 +45,7 @@ fun handleConfirmClick(
     // You can add validation, analytics, saving to DB, etc.
     val sleepLog = SleepLog(
         dateTime = dateTime,
-        duration = duration,
+        duration = duration.toInt(),
         quality = quality,
     )
 
