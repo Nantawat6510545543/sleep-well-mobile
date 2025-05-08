@@ -27,7 +27,7 @@ fun DateTimePickerButton(
             .fillMaxWidth()
             .height(56.dp)
             .border(
-                BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                 shape = RoundedCornerShape(4.dp)
             )
             .clickable(onClick = onClick)
