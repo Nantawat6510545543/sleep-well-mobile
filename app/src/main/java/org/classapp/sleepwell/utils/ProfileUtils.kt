@@ -8,9 +8,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.userProfileChangeRequest
 import org.classapp.sleepwell.R
 
 @Composable
@@ -23,5 +26,17 @@ fun ProfileImage(photoUrl: String?) {
         contentDescription = "Profile picture",
         placeholder = painterResource(R.drawable.profile_avatar_placeholder_large),
         modifier = Modifier.size(80.dp).clip(RoundedCornerShape(12.dp))
+    )
+}
+
+fun updateFirebaseAuthProfile(username: String?, photoUrl: String?) {
+    val user = FirebaseAuth.getInstance().currentUser
+    val newPhotoUri = photoUrl?.toUri()
+
+    user?.updateProfile(
+        userProfileChangeRequest {
+            displayName = username
+            photoUri = newPhotoUri
+        }
     )
 }

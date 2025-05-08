@@ -14,12 +14,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import org.classapp.sleepwell.components.EditableField
 import org.classapp.sleepwell.navigations.Routes
 import org.classapp.sleepwell.utils.ProfileImage
-import androidx.core.net.toUri
+import org.classapp.sleepwell.utils.updateFirebaseAuthProfile
 
 @Composable
 fun ProfileScreen(navController: NavController) {
@@ -40,7 +39,7 @@ fun ProfileScreen(navController: NavController) {
 
         if (user != null) {
             val userId = user.uid
-            val email = user.email ?: "No Email"
+            val email = user.email
 
             // UI state
             var username by remember { mutableStateOf(user.displayName ?: "") }
@@ -48,16 +47,15 @@ fun ProfileScreen(navController: NavController) {
             var gender by remember { mutableStateOf<String?>(null) }
             var height by remember { mutableStateOf<String?>(null) }
             var weight by remember { mutableStateOf<String?>(null) }
-            var photoUrl by remember { mutableStateOf(user.photoUrl?.toString()) }
+            var photoUrl by remember { mutableStateOf(user.photoUrl?.toString()) } // Ensure initial photo URL
             var editMode by remember { mutableStateOf(false) }
 
-            // Optional: image picker for external hosted URLs
+            // Image picker for external hosted URLs
             val launcher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.GetContent()
             ) { uri: Uri? ->
                 uri?.let {
-                    // Use this as a temp way to preview new image
-                    photoUrl = it.toString()
+                    photoUrl = it.toString() // Update photo URL when a new image is picked
                 }
             }
 
@@ -83,13 +81,16 @@ fun ProfileScreen(navController: NavController) {
                     .fillMaxWidth()
                     .wrapContentSize(Alignment.Center)
             ) {
-                // Use the fresh photo URL from FirebaseAuth
-                ProfileImage(user.photoUrl?.toString())
-            }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    ProfileImage(photoUrl)
 
-            if (editMode) {
-                Button(onClick = { launcher.launch("image/*") }) {
-                    Text("Choose New Profile Picture")
+                    // Image picker button
+                    if (editMode) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(onClick = { launcher.launch("image/*") }) {
+                            Text("Choose New Profile Picture")
+                        }
+                    }
                 }
             }
 
@@ -121,11 +122,10 @@ fun ProfileScreen(navController: NavController) {
                         )
 
                         firestore.collection("profiles").document(userId)
-                            .set(profileUpdates.filterValues { it != null }) // use set() to allow full overwrite
+                            .set(profileUpdates.filterValues { it != null }) // full overwrite
                             .addOnSuccessListener {
                                 // Sync with Firebase Auth
                                 updateFirebaseAuthProfile(username, photoUrl)
-
                                 editMode = false
                             }
                     }) {
@@ -148,16 +148,4 @@ fun ProfileScreen(navController: NavController) {
             }
         }
     }
-}
-
-private fun updateFirebaseAuthProfile(username: String?, photoUrl: String?) {
-    val user = FirebaseAuth.getInstance().currentUser
-    val newPhotoUri = photoUrl?.toUri()
-
-    user?.updateProfile(
-        userProfileChangeRequest {
-            displayName = username
-            photoUri = newPhotoUri
-        }
-    )
 }
