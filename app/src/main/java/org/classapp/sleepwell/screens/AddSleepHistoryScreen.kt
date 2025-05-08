@@ -1,5 +1,6 @@
 package org.classapp.sleepwell.screens
 
+import android.Manifest
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -7,11 +8,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import org.classapp.sleepwell.components.DateTimePickerButton
 import org.classapp.sleepwell.components.DateTimePickerDialog
+import org.classapp.sleepwell.utils.getUserLocation
 import org.classapp.sleepwell.utils.handleConfirmClick
+import org.classapp.sleepwell.utils.hasPermission
 import org.classapp.sleepwell.utils.validateSleepInput
 
 @Composable
@@ -25,6 +30,11 @@ fun AddSleepHistoryScreen() {
     var consentChecked by remember { mutableStateOf(false) }
     var showValidationError by remember { mutableStateOf(false) }
     var validationMessage by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val locationPermissionGranted = hasPermission(
+        context, Manifest.permission.ACCESS_FINE_LOCATION)
 
     Column(
         modifier = Modifier
@@ -104,11 +114,15 @@ fun AddSleepHistoryScreen() {
                     showValidationError = true
                 } else {
                     showValidationError = false
-                    handleConfirmClick(
-                        dateTime = sleepDateTime,
-                        duration = sleepDuration,
-                        quality = sleepQuality,
-                    )
+                    coroutineScope.launch {
+                        handleConfirmClick(
+                            context = context,
+                            dateTime = sleepDateTime,
+                            duration = sleepDuration,
+                            quality = sleepQuality,
+                            hasGeoPermission = locationPermissionGranted
+                        )
+                    }
                 }
             },
             modifier = Modifier

@@ -1,23 +1,25 @@
 package org.classapp.sleepwell.utils
 
+import android.content.Context
+
 data class ValidationResult(
     val isValid: Boolean,
     val message: String = ""
 )
 
 data class SleepLog(
-    val dateTime: String,
+    val sleepDate: String,
     val duration: Int,
     val quality: String,
 )
 
 fun validateSleepInput(
-    dateTime: String,
+    sleepDate: String,
     duration: String,
     quality: String,
     consentChecked: Boolean
 ): ValidationResult {
-    if (dateTime == "Press here to pick date & time") {
+    if (sleepDate == "Press here to pick date & time") {
         return ValidationResult(false, "Please select a valid date and time.")
     }
 
@@ -37,18 +39,28 @@ fun validateSleepInput(
     return ValidationResult(true)
 }
 
-fun handleConfirmClick(
+
+suspend fun handleConfirmClick(
+    context: Context,
     dateTime: String,
     duration: String,
     quality: String,
+    hasGeoPermission: Boolean
 ) {
-    // You can add validation, analytics, saving to DB, etc.
+    val location = if (hasGeoPermission) getUserLocation(context, hasGeoPermission) else null
     val sleepLog = SleepLog(
-        dateTime = dateTime,
+        sleepDate = dateTime,
         duration = duration.toInt(),
         quality = quality,
     )
 
-    // Replace with your desired logic
     println("Collected sleep log: $sleepLog")
+
+    location?.let {
+        val weatherResponse = fetchWeatherResponse(it)
+        weatherResponse?.let { response ->
+            val flattened = flattenedWeatherResponse(response)
+            println("Weather at sleep time: $flattened")
+        }
+    }
 }

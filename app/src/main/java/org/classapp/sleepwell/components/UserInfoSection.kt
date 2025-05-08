@@ -12,7 +12,7 @@ import android.location.Location
 import com.google.firebase.auth.FirebaseUser
 
 @Composable
-fun UserInfoSection(user: FirebaseUser, location: Location?) {
+fun UserInfoSection(user: FirebaseUser) {
     Column(modifier = Modifier.padding(bottom = 16.dp)) {
         Text(
             text = "Welcome, ${user.displayName}",
@@ -21,10 +21,5 @@ fun UserInfoSection(user: FirebaseUser, location: Location?) {
             color = Color.Black
         )
         Text(user.uid)
-
-        location?.let {
-            Text("Latitude: ${location.latitude}")
-            Text("Longitude: ${location.longitude}")
-        } ?: Text("Fetching location...")
     }
 }

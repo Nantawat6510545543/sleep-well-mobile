@@ -24,13 +24,10 @@ fun HomeScreen() {
         )
     )
 
-    val locationPermissionGranted = hasPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
     val audioPermissionGranted = hasPermission(context, Manifest.permission.RECORD_AUDIO)
 
-    val location = getUserLocation(locationPermissionGranted)
+//    val location = getUserLocation(locationPermissionGranted)
     val user = FirebaseAuth.getInstance().currentUser
-    var weatherData by remember { mutableStateOf<FlattenedWeatherApiResponse?>(null) }
-    val coroutineScope = rememberCoroutineScope()
 
     var isRecording by remember { mutableStateOf(false) }
 
@@ -39,24 +36,7 @@ fun HomeScreen() {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        user?.let {
-            UserInfoSection(user = it, location = location)
-        }
-
-        Button(
-            onClick = {
-                coroutineScope.launch {
-                    val weather = location?.let { fetchWeatherResponse(it) }
-                    weatherData = weather?.let { flattenedWeatherResponse(it) }
-                }
-            }
-        ) {
-            Text("Get Weather")
-        }
-
-        weatherData?.let {
-            WeatherDisplay(weather = it)
-        } ?: Text("No weather data available.", fontSize = 16.sp)
+        user?.let { UserInfoSection(user = it) }
 
         Spacer(modifier = Modifier.height(16.dp))
 
