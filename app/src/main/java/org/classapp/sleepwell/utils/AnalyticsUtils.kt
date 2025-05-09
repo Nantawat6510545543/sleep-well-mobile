@@ -1,36 +1,13 @@
 package org.classapp.sleepwell.utils
 
-import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
 
 data class SleepEntry(
     val sleepScore: Float,
     val sleepTime: Timestamp
 )
-
-suspend fun fetchSleepLog(userId: String): List<SleepLog> {
-    val firestore = Firebase.firestore
-    return try {
-        val snapshot = firestore.collection("sleeps")
-            .whereEqualTo("userId", userId)
-            .orderBy("sleepTime", Query.Direction.DESCENDING)
-            .get()
-            .await()
-
-        snapshot.documents.mapNotNull { it.toObject(SleepLog::class.java) }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        emptyList()
-    }
-}
-
-suspend fun fetchLatestSleepLog(userId: String): SleepLog? {
-    return fetchSleepLog(userId).firstOrNull()
-}
 
 // Analytics Page Sleep Data
 suspend fun fetchSleepAnalyticsData(userId: String): List<SleepEntry> {
