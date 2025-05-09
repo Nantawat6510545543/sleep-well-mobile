@@ -21,7 +21,6 @@ fun HomeScreen(navController: NavController) {
         listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.READ_EXTERNAL_STORAGE
         )
     )
 

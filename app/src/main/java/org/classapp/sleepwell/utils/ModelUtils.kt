@@ -14,25 +14,19 @@ fun loadModel(context: Context, modelPath: String): OrtSession {
     return environment.createSession(modelBytes)
 }
 
-fun runModel(session: OrtSession, input: Any): Any {
+fun runSentimentModel(session: OrtSession, input: String): Float {
     val env = OrtEnvironment.getEnvironment()
 
-    // Convert input to tensor
-    val tensor = when (input) {
-        is String -> {
-            // Model expects tensor(string), so pass a string array
-            OnnxTensor.createTensor(env, arrayOf(arrayOf(input)))
-        }
-        is FloatArray -> {
-            OnnxTensor.createTensor(env, input)
-        }
-        else -> throw IllegalArgumentException("Unsupported input type")
-    }
+    // Model expects tensor(string), so pass a string array
+    val tensor = OnnxTensor.createTensor(env, arrayOf(arrayOf(input)))
 
     // Run the session to get the prediction
     val inputName = session.inputNames.first()
     val results = session.run(mapOf(inputName to tensor))
 
-    // Return the result (assuming it's a tensor of floats)
-    return results[0].value
+    // Extract the value from the first tensor
+    val sentimentResult = results[0].value as Array<FloatArray>
+
+    // Return the first element of the sentimentResult
+    return sentimentResult[0][0]
 }

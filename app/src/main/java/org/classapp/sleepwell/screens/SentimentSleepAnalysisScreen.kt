@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.classapp.sleepwell.utils.loadModel
-import org.classapp.sleepwell.utils.runModel
+import org.classapp.sleepwell.utils.runSentimentModel
 
 @Composable
 fun SentimentSleepAnalysisScreen() {
@@ -34,8 +34,7 @@ fun SentimentSleepAnalysisScreen() {
         Button(onClick = {
             scope.launch {
                 // Run Sentiment Analysis using the helper function
-                val sentimentResult = runModel(sentimentModelSession, inputText) as Array<FloatArray>
-                val sentimentScore = sentimentResult[0][0] // Access the first element
+                val sentimentScore = runSentimentModel(sentimentModelSession, inputText)
 
                 // Log the Sentiment result
                 Log.d("SentimentAnalysis", "Sentiment Result: $sentimentScore")
