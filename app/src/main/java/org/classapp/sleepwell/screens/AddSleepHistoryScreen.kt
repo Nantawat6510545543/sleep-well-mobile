@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import org.classapp.sleepwell.components.DateTimePickerButton
 import org.classapp.sleepwell.components.DateTimePickerDialog
 import org.classapp.sleepwell.components.DecibelMeterSection
+import org.classapp.sleepwell.navigations.Routes
 import org.classapp.sleepwell.utils.handleConfirmClick
 import org.classapp.sleepwell.utils.hasPermission
 import org.classapp.sleepwell.utils.validateSleepInput
@@ -115,15 +116,25 @@ fun AddSleepHistoryScreen(navController: NavController) {
         }
 
         // Start/Stop Recording Button with Icon
-        Button(
-            onClick = { isRecording = !isRecording },
-            enabled = audioPermissionGranted
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Spacer(modifier = Modifier.width(8.dp))
             Text(
-                if (isRecording) "Stop Audio Recording"
-                else "Start Audio Recording"
+                text = "Press this before you sleep, and press again to stop recording to collect noise data",
+                modifier = Modifier.padding(bottom = 16.dp),
+                style = MaterialTheme.typography.bodyMedium
             )
+            Button(
+                onClick = { isRecording = !isRecording },
+                enabled = audioPermissionGranted,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = if (isRecording) "Stop Audio Recording" else "Start Audio Recording"
+                )
+            }
         }
 
         DecibelMeterSection (
@@ -160,7 +171,7 @@ fun AddSleepHistoryScreen(navController: NavController) {
 
                             // Show success toast and navigate to HistoryScreen
                             Toast.makeText(context, "Data added successfully", Toast.LENGTH_SHORT).show()
-                            navController.navigate("history_screen")
+                            navController.navigate(Routes.HISTORY)
                         }
                     }
                 }

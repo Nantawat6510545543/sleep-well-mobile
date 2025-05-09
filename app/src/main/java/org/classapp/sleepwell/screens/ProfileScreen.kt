@@ -54,10 +54,10 @@ fun ProfileScreen(navController: NavController) {
                 .get()
                 .addOnSuccessListener { doc ->
                     username = doc.getString("username") ?: username
-                    age = doc.getString("age")
+                    age = doc.getLong("age").toString()
                     gender = doc.getString("gender")
-                    height = doc.getString("height")
-                    weight = doc.getString("weight")
+                    height = doc.getLong("height").toString()
+                    weight = doc.getLong("weight").toString()
                     photoUrl = doc.getString("photoUrl") ?: photoUrl
                 }
         }
