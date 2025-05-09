@@ -28,7 +28,7 @@ fun MainScreen(navController: NavController) {
             startDestination = Routes.HOME,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Routes.HOME) { HomeScreen() }
+            composable(Routes.HOME) { HomeScreen(innerNavController) }
             composable(Routes.HISTORY) { HistoryScreen(innerNavController) }
             composable(Routes.ANALYTICS) { AnalyticsScreen() }
             composable(Routes.PROFILE) { ProfileScreen(navController) }
