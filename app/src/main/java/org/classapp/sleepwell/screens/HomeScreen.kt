@@ -7,7 +7,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,8 +29,9 @@ fun HomeScreen(navController: NavController) {
     val sleepLog by produceState<SleepLog?>(initialValue = null, user) {
         value = user?.uid?.let { fetchLatestSleepLog(it) }
     }
-    val sleepData by produceState<List<Map<String, Any>>>(initialValue = emptyList(), user) {
-        value = user?.uid?.let { queryUserSleepDataSuspend(it) } ?: emptyList()
+
+    val sleepData by produceState<List<SleepLog>>(initialValue = emptyList(), user) {
+        value = user?.uid?.let { fetchSleepLog(it) } ?: emptyList()
     }
 
     val avgScore = remember(sleepData) { calculateAverageSleepScore(sleepData) }
@@ -96,8 +96,8 @@ fun HomeScreen(navController: NavController) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("Quick Insight:", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text("Your average sleep: ${"%.1f".format(avgDuration)} hr", fontSize = 16.sp)
-                Text("Average sleep score: ${"%.1f".format(avgScore)}", fontSize = 16.sp)
+                Text("Your average sleep: ${"%.2f".format(avgDuration)} hr", fontSize = 16.sp)
+                Text("Average sleep score: ${"%.2f".format(avgScore)}", fontSize = 16.sp)
             }
         }
     }

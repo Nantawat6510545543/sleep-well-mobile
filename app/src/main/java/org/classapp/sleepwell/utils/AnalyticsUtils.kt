@@ -12,63 +12,48 @@ data class SleepEntry(
     val sleepTime: Timestamp
 )
 
-suspend fun fetchLatestSleepLog(userId: String): SleepLog? {
+suspend fun fetchSleepLog(userId: String): List<SleepLog> {
     val firestore = Firebase.firestore
     return try {
         val snapshot = firestore.collection("sleeps")
             .whereEqualTo("userId", userId)
             .orderBy("sleepTime", Query.Direction.DESCENDING)
-            .limit(1)
             .get()
             .await()
 
-        if (!snapshot.isEmpty) {
-            snapshot.documents[0].toObject(SleepLog::class.java)
-        } else null
+        snapshot.documents.mapNotNull { it.toObject(SleepLog::class.java) }
     } catch (e: Exception) {
         e.printStackTrace()
-        null
+        emptyList()
     }
 }
 
-// Quick Insight Sleep Data
-suspend fun queryUserSleepDataSuspend(userId: String): List<Map<String, Any>> {
-    val db = FirebaseFirestore.getInstance()
-    val snapshot = db.collection("sleeps")
-        .whereEqualTo("userId", userId)
-        .orderBy("sleepTime", Query.Direction.DESCENDING)
-        .get()
-        .await()
-    return snapshot.map { it.data }
+suspend fun fetchLatestSleepLog(userId: String): SleepLog? {
+    return fetchSleepLog(userId).firstOrNull()
 }
 
 // Analytics Page Sleep Data
-fun fetchSleepAnalyticsData(
-    userId: String,
-    onResult: (List<SleepEntry>) -> Unit
-) {
-    FirebaseFirestore.getInstance()
-        .collection("sleeps") // replace with your actual collection
+suspend fun fetchSleepAnalyticsData(userId: String): List<SleepEntry> {
+    val snapshot = FirebaseFirestore.getInstance()
+        .collection("sleeps")
         .whereEqualTo("userId", userId)
         .orderBy("sleepTime")
         .get()
-        .addOnSuccessListener { result ->
-            val entries = result.mapNotNull { doc ->
-                val score = doc.getDouble("sleepScore")?.toFloat()
-                val time = doc.getTimestamp("sleepTime")
-                if (score != null && time != null) SleepEntry(score, time) else null
-            }
-            onResult(entries)
-        }
+        .await()
+
+    return snapshot.mapNotNull { doc ->
+        val score = doc.getDouble("sleepScore")?.toFloat()
+        val time = doc.getTimestamp("sleepTime")
+        if (score != null && time != null) SleepEntry(score, time) else null
+    }
 }
 
-
-fun calculateAverageSleepScore(data: List<Map<String, Any>>): Double {
-    val scores = data.mapNotNull { (it["sleepScore"] as? Number)?.toDouble() }
+fun calculateAverageSleepScore(sleepLogs: List<SleepLog>): Double {
+    val scores = sleepLogs.map { it.sleepScore }
     return if (scores.isNotEmpty()) scores.average() else 0.0
 }
 
-fun calculateAverageDuration(data: List<Map<String, Any>>): Double {
-    val durations = data.mapNotNull { (it["duration"] as? Number)?.toDouble() }
+fun calculateAverageDuration(sleepLogs: List<SleepLog>): Double {
+    val durations = sleepLogs.map { it.duration }
     return if (durations.isNotEmpty()) durations.average() else 0.0
 }
