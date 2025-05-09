@@ -117,6 +117,11 @@ dependencies {
     // Gson deserializer
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 
-    // AI
+    // ML Integration with ONNX
     implementation("com.microsoft.onnxruntime:onnxruntime-android:latest.release")
+
+    // Vico Plotting Library
+    implementation("com.patrykandpatrick.vico:core:1.13.0") // or latest
+    implementation("com.patrykandpatrick.vico:compose:1.13.0")
+    implementation("com.patrykandpatrick.vico:compose-m3:1.13.0") // Material3 theme
 }
