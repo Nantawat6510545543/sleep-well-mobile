@@ -28,12 +28,13 @@ import androidx.navigation.NavController
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import org.classapp.sleepwell.navigations.Routes
 
 data class SleepData(
     val id: String,
-    val bedtime: Timestamp = Timestamp.now(),
-    val comment: String = "",
+    val sleepTime: Timestamp = Timestamp.now(),
+    val sleepComment: String = "",
     val duration: Number = 0,
     val sleepScore: Number = 0
 )
@@ -49,23 +50,24 @@ fun HistoryScreen(navController: NavController) {
         if (user != null) {
             db.collection("sleeps")
                 .whereEqualTo("userId", user.uid)
+                .orderBy("sleepTime", Query.Direction.DESCENDING) // Sort by most recent
                 .get()
                 .addOnSuccessListener { result ->
                     for (document in result) {
                         val data = document.data
                         val id = document.id
-                        val bedtime = data["bedtime"] as? Timestamp ?: Timestamp.now()
+                        val bedtime = data["sleepTime"] as? Timestamp ?: Timestamp.now()
                         val duration = (data["duration"] as? Number) ?: 0
                         val sleepScore = (data["sleepScore"] as? Number) ?: 0
-                        val comment = data["comment"] as? String ?: ""
+                        val sleepComment = data["sleepComment"] as? String ?: ""
 
                         sleepList.add(
                             SleepData(
                                 id = id,
-                                bedtime = bedtime,
+                                sleepTime = bedtime,
                                 duration = duration,
                                 sleepScore = sleepScore,
-                                comment = comment
+                                sleepComment = sleepComment
                             )
                         )
                     }
@@ -120,8 +122,8 @@ fun SleepListItem(navController: NavController, sleep: SleepData) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = "Sleep ID: ${sleep.id}")
-            Text(text = "Bedtime: ${sleep.bedtime.toDate()}")
-            Text(text = "Comment: ${sleep.comment}")
+            Text(text = "Bedtime: ${sleep.sleepTime.toDate()}")
+            Text(text = "Comment: ${sleep.sleepComment}")
             Text(text = "Duration: ${sleep.duration} hours")
             Text(text = "Sleep Score: ${sleep.sleepScore}")
             Spacer(modifier = Modifier.padding(top = 8.dp))

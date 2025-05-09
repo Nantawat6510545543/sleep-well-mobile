@@ -18,8 +18,8 @@ data class ValidationResult(
 data class SleepLog(
     // Sleep
     val userId: String = "",
-    val sleepDate: Timestamp = Timestamp.now(),
-    val duration: Int = 0,
+    val sleepTime: Timestamp = Timestamp.now(),
+    val duration: Double = 0.0,
     val sleepComment: String = "",
     val sleepScore: Double = 0.0,
 
@@ -32,10 +32,10 @@ data class SleepLog(
     val noise: Double = 0.0
 )
 
-fun convertToTimestamp(sleepDate: String): Timestamp? {
+fun convertToTimestamp(sleepTime: String): Timestamp? {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
     return try {
-        val parsedDate: Date? = dateFormat.parse(sleepDate)
+        val parsedDate: Date? = dateFormat.parse(sleepTime)
         parsedDate?.let { Timestamp(it) }
     } catch (e: Exception) {
         Log.e("convertToTimestamp", "Error converting date")
@@ -44,17 +44,17 @@ fun convertToTimestamp(sleepDate: String): Timestamp? {
 }
 
 fun validateSleepInput(
-    sleepDate: String,
+    sleepTime: String,
     duration: String,
     sleepComment: String,
     consentChecked: Boolean
 ): ValidationResult {
-    if (sleepDate == "Press here to pick date & time") {
+    if (sleepTime == "Press here to pick date & time") {
         return ValidationResult(false, "Please select a valid date and time.")
     }
 
-    val durationInt = duration.toIntOrNull()
-    if (durationInt == null || durationInt <= 0) {
+    val durationDouble = duration.toDoubleOrNull()
+    if (durationDouble == null || durationDouble <= 0) {
         return ValidationResult(false, "Please enter a valid sleep duration (as a number).")
     }
 
@@ -72,7 +72,7 @@ fun validateSleepInput(
 
 suspend fun handleConfirmClick(
     context: Context,
-    sleepDate: String,
+    sleepTime: String,
     duration: String,
     sleepComment: String,
     hasGeoPermission: Boolean,
@@ -81,15 +81,15 @@ suspend fun handleConfirmClick(
     val location = getUserLocation(context, hasGeoPermission)
     val userId = FirebaseAuth.getInstance().currentUser?.uid
     val weatherResponse = location?.let { fetchWeatherResponse(it) }
-    val sleepTimestamp = convertToTimestamp(sleepDate)
+    val sleepTimestamp = convertToTimestamp(sleepTime)
 
     if (location != null && userId != null && weatherResponse != null && sleepTimestamp != null) {
         val flattened = flattenedWeatherResponse(weatherResponse)
 
         val sleepLog = SleepLog(
             userId = userId,
-            sleepDate = sleepTimestamp,
-            duration = duration.toInt(),
+            sleepTime = sleepTimestamp,
+            duration = duration.toDouble(),
             sleepComment = sleepComment,
             noise = averageDecibel,
             sleepScore = 123.4,  // TODO: compute meaningful score

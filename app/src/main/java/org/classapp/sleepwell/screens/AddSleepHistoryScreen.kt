@@ -137,7 +137,7 @@ fun AddSleepHistoryScreen(navController: NavController) {
         Button(
             onClick = {
                 val result = validateSleepInput(
-                    sleepDate = sleepDateTime,
+                    sleepTime = sleepDateTime,
                     duration = sleepDuration,
                     sleepComment = sleepComment,
                     consentChecked = consentChecked
@@ -151,7 +151,7 @@ fun AddSleepHistoryScreen(navController: NavController) {
                         averageDecibel?.let {
                             handleConfirmClick(
                                 context = context,
-                                sleepDate = sleepDateTime,
+                                sleepTime = sleepDateTime,
                                 duration = sleepDuration,
                                 sleepComment = sleepComment,
                                 hasGeoPermission = locationPermissionGranted,

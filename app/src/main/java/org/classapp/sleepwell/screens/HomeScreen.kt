@@ -18,7 +18,6 @@ import org.classapp.sleepwell.utils.*
 
 @Composable
 fun HomeScreen(navController: NavController) {
-//    val context = LocalContext.current
     requestPermission(
         listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -28,6 +27,16 @@ fun HomeScreen(navController: NavController) {
 
     val user = FirebaseAuth.getInstance().currentUser
 
+    val sleepLog by produceState<SleepLog?>(initialValue = null, user) {
+        value = user?.uid?.let { fetchLatestSleepLog(it) }
+    }
+    val sleepData by produceState<List<Map<String, Any>>>(initialValue = emptyList(), user) {
+        value = user?.uid?.let { queryUserSleepDataSuspend(it) } ?: emptyList()
+    }
+
+    val avgScore = remember(sleepData) { calculateAverageSleepScore(sleepData) }
+    val avgDuration = remember(sleepData) { calculateAverageDuration(sleepData) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -35,37 +44,36 @@ fun HomeScreen(navController: NavController) {
         verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (user != null) {
+        user?.displayName?.let {
             Text(
-                text = "Welcome back,\n${user.displayName}!",
+                text = "Welcome back,\n$it!",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
         }
 
-        // Latest Sleep Log Card
         Card(
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(8.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    "Latest Sleep Log",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp
-                )
+                Text("Latest Sleep Log", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("You slept 7h last night.", fontSize = 16.sp)
-                Text("Your sleep score: 95", fontSize = 16.sp)
-                Text("Your sleep score improved by 5%!", fontSize = 16.sp)
+
+                if (sleepLog != null) {
+                    Text("You slept ${sleepLog!!.duration}h last night.", fontSize = 16.sp)
+                    Text("Your sleep score: ${sleepLog!!.sleepScore}", fontSize = 16.sp)
+                    Text("Comment: ${sleepLog!!.sleepComment}", fontSize = 16.sp)
+                    Text("Weather: ${sleepLog!!.weatherCondition}, ${sleepLog!!.tempC}°C, Humidity: ${sleepLog!!.humidity}%", fontSize = 16.sp)
+                } else {
+                    Text("Loading sleep data...", fontSize = 16.sp)
+                }
             }
         }
 
-        // Add Sleep Log Button
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Just have a sleep?", fontSize = 24.sp)
+            Text("Just had a sleep?", fontSize = 24.sp)
             Spacer(modifier = Modifier.height(8.dp))
             Button(
                 onClick = { navController.navigate(Routes.ADD_SLEEP_HISTORY) },
@@ -78,21 +86,18 @@ fun HomeScreen(navController: NavController) {
         }
 
         SentimentSleepAnalysisScreen()
-        Spacer(modifier = Modifier.weight(1f)) // push card to bottom
-        // Quick Insight Card
+
+        Spacer(modifier = Modifier.weight(1f))
+
         Card(
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    "Quick Insight:",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp
-                )
+                Text("Quick Insight:", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text("Your average sleep this week: 7.5hr", fontSize = 16.sp)
+                Text("Your average sleep: ${"%.1f".format(avgDuration)} hr", fontSize = 16.sp)
+                Text("Average sleep score: ${"%.1f".format(avgScore)}", fontSize = 16.sp)
             }
         }
     }

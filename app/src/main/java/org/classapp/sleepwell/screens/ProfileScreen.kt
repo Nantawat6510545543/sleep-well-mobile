@@ -75,10 +75,10 @@ fun ProfileScreen(navController: NavController) {
                         Button(onClick = {
                             val profileUpdates = mapOf(
                                 "username" to username,
-                                "age" to age,
+                                "age" to age?.toIntOrNull(),
                                 "gender" to gender,
-                                "height" to height,
-                                "weight" to weight,
+                                "height" to height?.toFloatOrNull(),
+                                "weight" to weight?.toFloatOrNull(),
                                 "photoUrl" to photoUrl
                             )
 

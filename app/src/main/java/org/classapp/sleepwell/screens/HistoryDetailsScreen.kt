@@ -46,7 +46,7 @@ fun HistoryDetailsScreen(navController: NavController, sleepId: String?) {
         sleepLog?.let { log ->
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = "Sleep ID: $sleepId")
-            Text(text = "Sleep Date: ${log.sleepDate.toDate()}")
+            Text(text = "Sleep Date/Time: ${log.sleepTime.toDate()}")
             Text(text = "Duration: ${log.duration} minutes")
             Text(text = "Comment: ${log.sleepComment}")
             Text(text = "Sleep Score: ${log.sleepScore}")
