@@ -98,7 +98,7 @@ fun AddSleepHistoryScreen(navController: NavController) {
             Button(onClick = {
                 scope.launch {
                     // Run Sentiment Analysis using the helper function
-                    val sentimentScore = runSentimentModel(sentimentModelSession, sleepComment)
+                    val sentimentScore = runSentimentModel(context, sentimentModelSession, sleepComment)
 
                     // Log the Sentiment result
                     Log.d("SentimentAnalysis", "Sentiment Result: $sentimentScore")

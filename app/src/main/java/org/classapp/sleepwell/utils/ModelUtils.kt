@@ -14,9 +14,9 @@ fun loadModel(context: Context, modelPath: String): OrtSession {
     return environment.createSession(modelBytes)
 }
 
-fun runSentimentModel(session: OrtSession, input: String): Float {
+fun runSentimentModel(context: Context, session: OrtSession, input: String): Float {
     val env = OrtEnvironment.getEnvironment()
-
+    test(context)
     // Model expects tensor(string), so pass a string array
     val tensor = OnnxTensor.createTensor(env, arrayOf(input))
 
