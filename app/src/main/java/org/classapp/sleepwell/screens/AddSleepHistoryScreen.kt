@@ -1,6 +1,7 @@
 package org.classapp.sleepwell.screens
 
 import android.Manifest
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +21,8 @@ import org.classapp.sleepwell.components.DecibelMeterSection
 import org.classapp.sleepwell.navigations.Routes
 import org.classapp.sleepwell.utils.handleConfirmClick
 import org.classapp.sleepwell.utils.hasPermission
+import org.classapp.sleepwell.utils.loadModel
+import org.classapp.sleepwell.utils.runSentimentModel
 import org.classapp.sleepwell.utils.validateSleepInput
 
 @Composable
@@ -87,6 +90,28 @@ fun AddSleepHistoryScreen(navController: NavController) {
                 placeholder = { Text("Input text") },
                 modifier = Modifier.fillMaxWidth()
             )
+
+            // TODO TEMP
+            val scope = rememberCoroutineScope()
+            val sentimentModelSession = remember { loadModel(context, "sentiment_analysis_model.onnx") }
+            val sleepModelSession = remember { loadModel(context, "sleep_model.onnx") }
+            Button(onClick = {
+                scope.launch {
+                    // Run Sentiment Analysis using the helper function
+                    val sentimentScore = runSentimentModel(sentimentModelSession, sleepComment)
+
+                    // Log the Sentiment result
+                    Log.d("SentimentAnalysis", "Sentiment Result: $sentimentScore")
+
+//                // Use the sentiment result for sleep prediction
+//                val sleepPrediction = runModel(sleepModelSession, sentimentResult) as FloatArray
+//
+//                // Log the Sleep prediction result
+//                Log.d("SleepPrediction", "Predicted Sleep: ${sleepPrediction[0]}")
+                }
+            }) {
+                Text("Analyze")
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 

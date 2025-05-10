@@ -85,8 +85,6 @@ fun HomeScreen(navController: NavController) {
             }
         }
 
-        SentimentSleepAnalysisScreen()
-
         Spacer(modifier = Modifier.weight(1f))
 
         Card(
