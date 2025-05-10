@@ -18,15 +18,15 @@ fun runSentimentModel(session: OrtSession, input: String): Float {
     val env = OrtEnvironment.getEnvironment()
 
     // Model expects tensor(string), so pass a string array
-    val tensor = OnnxTensor.createTensor(env, arrayOf(arrayOf(input)))
+    val tensor = OnnxTensor.createTensor(env, arrayOf(input))
 
-    // Run the session to get the prediction
-    val inputName = session.inputNames.first()
-    val results = session.run(mapOf(inputName to tensor))
+    // Run inference on the model
+    val inputName = session.inputNames.first()  // Get the input name
+    val result = session.run(mapOf(inputName to tensor))
 
-    // Extract the value from the first tensor
-    val sentimentResult = results[0].value as Array<FloatArray>
+    // Assuming the second output contains the class probabilities (scale between 0 and 1)
+    val prob = (result[1].value as Array<FloatArray>)[0][1]  // Class 1 probability
+    val sentimentScore = prob * 2 - 1  // Scale [0, 1] -> [-1, 1]
 
-    // Return the first element of the sentimentResult
-    return sentimentResult[0][0]
+    return sentimentScore
 }

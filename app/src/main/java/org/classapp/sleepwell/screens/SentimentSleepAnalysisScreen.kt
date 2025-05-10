@@ -18,7 +18,7 @@ fun SentimentSleepAnalysisScreen() {
     val scope = rememberCoroutineScope()
 
     // Create sessions for models
-    val sentimentModelSession = remember { loadModel(context, "sentiment_analysis.onnx") }
+    val sentimentModelSession = remember { loadModel(context, "sentiment_analysis_model.onnx") }
     val sleepModelSession = remember { loadModel(context, "sleep_model.onnx") }
 
     Column(modifier = Modifier.padding(16.dp)) {
