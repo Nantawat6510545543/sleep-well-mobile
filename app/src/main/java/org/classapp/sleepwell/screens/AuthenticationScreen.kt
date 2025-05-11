@@ -32,7 +32,7 @@ fun AuthenticationScreen(
         } else {
             val providers = arrayListOf(
                 AuthUI.IdpConfig.EmailBuilder().build(),
-                AuthUI.IdpConfig.GoogleBuilder().build()
+//                AuthUI.IdpConfig.GoogleBuilder().build()
             )
 
             val intent = AuthUI.getInstance()
