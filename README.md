@@ -8,8 +8,6 @@
 All team members are affiliated with the Department of Engineering, Faculty of Software and
 Knowledge Engineering, and are students at Kasetsart University.
 
----
-
 ## Overview
 
 **Sleep-Well Mobile App** is the **sequel** to our previous
@@ -22,8 +20,6 @@ The original project focused on collecting and analyzing sleep data through an A
 > environmental factors (such as weather and noise levels), and personal information about an
 > individual's sleep patterns. It also features analytics to analyze sleep comments and provide
 > insights into sleep quality trends.
-
----
 
 ## Project Overview
 
@@ -38,16 +34,12 @@ Key features include:
 - Background noise detection using the phone microphone
 - Visualization of sleep trends and insights
 
----
-
 ## AI Model
 
 The AI model was developed using Google Colab and trained to predict a sleep quality score based on
 both personal and environmental factors.
 
-[View the AI Model on Google Colab](https://colab.research.google.com/drive/1XVsWzQs8yWUHJDgGk5xxtxKcujiFlw_o#scrollTo=jrynZdRIu5Vg)
-
----
+[Google Colab](https://colab.research.google.com/drive/1XVsWzQs8yWUHJDgGk5xxtxKcujiFlw_o#scrollTo=jrynZdRIu5Vg)
 
 ## Model Input Features
 
