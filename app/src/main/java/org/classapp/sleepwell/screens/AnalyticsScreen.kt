@@ -36,11 +36,15 @@ fun AnalyticsScreen() {
     val user = FirebaseAuth.getInstance().currentUser
     var sleepEntries by remember { mutableStateOf<List<SleepEntry>>(emptyList()) }
     var sleepLogs by remember { mutableStateOf<List<SleepLog>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(user) {
         user?.uid?.let { uid ->
             sleepEntries = fetchSleepAnalyticsData(uid)
             sleepLogs = fetchSleepLog(uid)
+
+            // Once the data is fetched, set loading state to false
+            isLoading = false
         }
     }
 
@@ -52,7 +56,6 @@ fun AnalyticsScreen() {
         .fillMaxSize()
         .padding(16.dp)
     ) {
-        // Title Text
         Text(
             text = "Visualization",
             fontSize = 32.sp,
@@ -61,10 +64,20 @@ fun AnalyticsScreen() {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        if (sleepEntries.isNotEmpty()) {
-            SleepScoreChart(sleepEntries)
+        if (isLoading) {
+            Text(
+                text = "Loading...",
+                modifier = Modifier.padding(top = 16.dp)
+            )
         } else {
-            Text("Loading...")
+            if (sleepEntries.isNotEmpty()) {
+                SleepScoreChart(sleepEntries)
+            } else {
+                Text(
+                    text = "Data not available",
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
         }
 
         // Bottom Cards for Average Sleep Score and Duration

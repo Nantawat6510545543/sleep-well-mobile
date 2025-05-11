@@ -36,7 +36,8 @@ fun encodeWeatherCondition(context: Context, condition: String): Int {
 //        "Light rain" to 3,
 //        "Sunny" to 4,
 //        "Light drizzle" to 5,
-//        "Cloudy" to 6
+//        "Cloudy" to 6,
+//    "Partly Cloudy" to 7
 //    )
 
     // Encode condition using getOrPut — if not found, assign a new ID

@@ -40,7 +40,7 @@ fun SleepListItem(navController: NavController, sleep: SleepData, onDelete: (Str
             Text(text = "Bedtime: ${sleep.sleepTime.toDate()}")
             Text(text = "Comment: ${sleep.sleepComment}")
             Text(text = "Duration: ${sleep.duration} hours")
-            Text(text = "Sleep Score: ${sleep.sleepScore}")
+            Text(text = "Sleep Score: %.2f".format(sleep.sleepScore))
 
             Spacer(modifier = Modifier.height(16.dp))
 
