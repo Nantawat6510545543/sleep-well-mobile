@@ -12,10 +12,24 @@ Knowledge Engineering, and are students at Kasetsart University.
 
 ## Overview
 
-**Sleep-Well** is a mobile application designed to help users understand and improve their sleep
-quality using an embedded AI model. The app allows users to input personal and environmental
-sleep-related data, and instantly receive a predicted sleep score along with personalized insights
-and recommendations.
+**Sleep-Well Mobile App** is the **sequel** to our previous
+project, [Sleep-Well RESTful API Web Service](https://github.com/Nantawat6510545543/sleep-well).  
+The original project focused on collecting and analyzing sleep data through an API service.
+
+> **Original Project Overview**:  
+> Sleep-Well is a RESTful API web service designed to offer sleep quality data to users. The API
+> provides endpoints for accessing sleep information, including sleep duration, quality scores,
+> environmental factors (such as weather and noise levels), and personal information about an
+> individual's sleep patterns. It also features analytics to analyze sleep comments and provide
+> insights into sleep quality trends.
+
+---
+
+## Project Overview
+
+**Sleep-Well Mobile App** extends this concept by turning the backend insights into a user-friendly
+**mobile experience**. It uses a trained AI model to predict sleep scores based on personal and
+environmental data, and helps users track and improve their sleep habits.
 
 Key features include:
 
@@ -23,9 +37,6 @@ Key features include:
 - Environmental data integration via WeatherAPI
 - Background noise detection using the phone microphone
 - Visualization of sleep trends and insights
-
-The application is built using **Kotlin** for Android devices and stores data in **Firebase**. It is
-designed to be lightweight, user-friendly, and data-driven.
 
 ---
 
