@@ -13,7 +13,7 @@ Knowledge Engineering, and are students at Kasetsart University.
 ## Overview
 
 **Sleep-Well Mobile App** is the **sequel** to our previous
-project, [Sleep-Well RESTful API Web Service](https://github.com/Nantawat6510545543/sleep-well).  
+project, [Sleep-Well](https://github.com/Nantawat6510545543/sleep-well).  
 The original project focused on collecting and analyzing sleep data through an API service.
 
 > **Original Project Overview**:  
@@ -45,7 +45,7 @@ Key features include:
 The AI model was developed using Google Colab and trained to predict a sleep quality score based on
 both personal and environmental factors.
 
-👉 [View the AI Model on Google Colab](https://colab.research.google.com/drive/1XVsWzQs8yWUHJDgGk5xxtxKcujiFlw_o#scrollTo=jrynZdRIu5Vg)
+[View the AI Model on Google Colab](https://colab.research.google.com/drive/1XVsWzQs8yWUHJDgGk5xxtxKcujiFlw_o#scrollTo=jrynZdRIu5Vg)
 
 ---
 
