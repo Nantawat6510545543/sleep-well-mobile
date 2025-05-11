@@ -7,15 +7,15 @@ import com.google.firebase.auth.FirebaseAuth
 
 // Data class to hold user information
 data class UserInfo(
-    val age: Int?,
-    val height: Int?,
-    val weight: Int?,
-    val gender: String
+    val gender: String? = null,
+    val age: Int? = null,
+    val height: Int? = null,
+    val weight: Double? = null
 )
 
 // Validation function to check if the user info is complete
 fun validateUserInfo(userInfo: UserInfo): Boolean {
-    return userInfo.age != null && userInfo.height != null && userInfo.weight != null && userInfo.gender.isNotBlank()
+    return userInfo.age != null && userInfo.height != null && userInfo.weight != null && !userInfo.gender.isNullOrBlank()
 }
 
 // Function to save user profile to Firestore

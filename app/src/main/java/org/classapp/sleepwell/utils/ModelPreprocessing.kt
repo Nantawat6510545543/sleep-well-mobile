@@ -8,7 +8,7 @@ import java.lang.reflect.Type
 
 
 // Function to process the input map, check for the weather condition, and update the map if necessary
-fun encodeWeatherCondition(context: Context, condition: String) {
+fun encodeWeatherCondition(context: Context, condition: String): Int {
     // Note: To access, open Android Device Monitor:
     //
     // go to View -> Tool Windows -> Device File Explorer.
@@ -46,27 +46,7 @@ fun encodeWeatherCondition(context: Context, condition: String) {
     val updatedJson = gson.toJson(conditionTextMap)
 
     file.writeText(updatedJson)
-
+    return encodedCondition
 //    Debug Print
 //    println("Encoded condition_text: $condition = $encodedCondition")
-}
-
-fun test(context: Context) {
-    val inputData: Map<String, Any> = mapOf(
-        "duration" to 7,
-        "humidity" to 83,
-        "noise" to 3.02,
-        "place" to "Tokyo",
-        "precip" to 0.12,
-        "sleepComment" to "amazing",
-        "sleepScore" to 123.4,
-        "sleepTime" to "May 7, 2025 at 4:00:00 AM UTC+7",
-        "tempC" to 18.1,
-        "userId" to "KuOa3PNNHaQmxFgrgLrGF0g1D222",
-        "weatherCondition" to "Light rain"
-    )
-
-    val condition = inputData["weatherCondition"] as String
-
-    encodeWeatherCondition(context, condition)
 }

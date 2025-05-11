@@ -93,8 +93,6 @@ fun AddSleepHistoryScreen(navController: NavController) {
 
             // TODO TEMP
             val scope = rememberCoroutineScope()
-            val sentimentModelSession = remember { loadModel(context, "sentiment_analysis_model.onnx") }
-            val sleepModelSession = remember { loadModel(context, "sleep_model.onnx") }
             Button(onClick = {
                 scope.launch {
                     // Run Sentiment Analysis using the helper function
@@ -102,12 +100,6 @@ fun AddSleepHistoryScreen(navController: NavController) {
 
                     // Log the Sentiment result
                     Log.d("SentimentAnalysis", "Sentiment Result: $sentimentScore")
-
-//                // Use the sentiment result for sleep prediction
-//                val sleepPrediction = runModel(sleepModelSession, sentimentResult) as FloatArray
-//
-//                // Log the Sleep prediction result
-//                Log.d("SleepPrediction", "Predicted Sleep: ${sleepPrediction[0]}")
                 }
             }) {
                 Text("Analyze")

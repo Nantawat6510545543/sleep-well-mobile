@@ -15,10 +15,10 @@ import org.classapp.sleepwell.utils.saveUserProfile
 
 @Composable
 fun UserInfoFormScreen(onSubmit: () -> Unit) {
-    var age by remember { mutableStateOf<Int?>(null) }
-    var height by remember { mutableStateOf<Int?>(null) }
-    var weight by remember { mutableStateOf<Int?>(null) }
     var gender by remember { mutableStateOf("") }
+    var age by remember { mutableStateOf<Int?>(null) }
+    var weight by remember { mutableStateOf<Int?>(null) }
+    var height by remember { mutableStateOf<Int?>(null) }
 
     val genderOptions = listOf("Male", "Female", "Others")
     val context = LocalContext.current
@@ -47,7 +47,7 @@ fun UserInfoFormScreen(onSubmit: () -> Unit) {
 
         Button(
             onClick = {
-                val userInfo = UserInfo(age, height, weight, gender)
+                val userInfo = UserInfo(gender, age, weight, height?.toDouble())
                 saveUserProfile(userInfo, context, onSubmit)
             }
         ) {

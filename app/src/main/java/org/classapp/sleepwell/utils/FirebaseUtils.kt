@@ -60,3 +60,20 @@ suspend fun getSleepLogById(sleepId: String): SleepLog? {
         null
     }
 }
+
+suspend fun getUserInfo(userId: String): UserInfo? {
+    val firestore = FirebaseFirestore.getInstance()
+
+    return try {
+        val documentSnapshot = firestore.collection("profiles")
+            .document(userId)
+            .get()
+            .await()
+
+        // Convert Firestore document to UserInfo object
+        documentSnapshot.toObject(UserInfo::class.java)
+    } catch (e: Exception) {
+        Log.e("getUserInfo", "Error fetching user data: ${e.message}")
+        null
+    }
+}

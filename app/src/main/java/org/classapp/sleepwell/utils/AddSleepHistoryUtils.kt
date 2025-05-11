@@ -33,7 +33,7 @@ data class SleepLog(
 )
 
 data class SleepFeature(
-    val sex: Int,
+    val gender: Int,
     val age: Int,
     val height: Int,
     val weight: Double,
@@ -96,9 +96,33 @@ suspend fun handleConfirmClick(
     val userId = FirebaseAuth.getInstance().currentUser?.uid
     val weatherResponse = location?.let { fetchWeatherResponse(it) }
     val sleepTimestamp = convertToTimestamp(sleepTime)
+    val userInfo = userId?.let { getUserInfo(it) }
 
-    if (location != null && userId != null && weatherResponse != null && sleepTimestamp != null) {
+    if (location != null && userId != null && weatherResponse != null
+        && sleepTimestamp != null && userInfo != null) {
         val flattened = flattenedWeatherResponse(weatherResponse)
+
+        val genderInt = when (userInfo.gender) {
+            "Male" -> 0
+            "Female" -> 1
+            else -> 2 // For "Others" or any other gender
+        }
+
+        val features = SleepFeature(
+            gender = genderInt,
+            age = userInfo.age!!,
+            height = userInfo.height!!,
+            weight = userInfo.weight!!.toDouble(),
+            temp_c = flattened.temp_c,
+            condition_text = encodeWeatherCondition(context, flattened.condition_text),
+            precip_mm = flattened.precip_mm,
+            humidity = flattened.humidity.toDouble(),
+            noise = averageDecibel,
+            sleep_duration = duration.toDouble(),
+            sentiment = predictSentiment(context, sleepComment)
+        )
+
+//        Log.e("feature", features.toString())
 
         val sleepLog = SleepLog(
             userId = userId,
@@ -106,7 +130,7 @@ suspend fun handleConfirmClick(
             duration = duration.toDouble(),
             sleepComment = sleepComment,
             noise = averageDecibel,
-            sleepScore = 123.4,  // TODO: compute meaningful score
+            sleepScore = predictSleepScore(context, features),
             place = flattened.location_name,
             tempC = flattened.temp_c,
             humidity = flattened.humidity,
