@@ -46,3 +46,17 @@ fun deleteSleepLog(sleepId: String) {
         Log.d("FirestoreUtils", "User is not authenticated.")
     }
 }
+
+suspend fun getSleepLogById(sleepId: String): SleepLog? {
+    val db = Firebase.firestore
+    return try {
+        val doc = db.collection("sleeps")
+            .document(sleepId)
+            .get()
+            .await()
+        doc.toObject(SleepLog::class.java)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}

@@ -32,6 +32,20 @@ data class SleepLog(
     val noise: Double = 0.0
 )
 
+data class SleepFeature(
+    val sex: Int,
+    val age: Int,
+    val height: Int,
+    val weight: Double,
+    val temp_c: Double,
+    val condition_text: Int,
+    val precip_mm: Double,
+    val humidity: Double,
+    val noise: Double,
+    val sleep_duration: Double,
+    val sentiment: Double
+)
+
 fun convertToTimestamp(sleepTime: String): Timestamp? {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
     return try {

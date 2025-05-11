@@ -24,10 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
-import kotlinx.coroutines.tasks.await
 import org.classapp.sleepwell.utils.SleepLog
+import org.classapp.sleepwell.utils.getSleepLogById
 
 
 @Composable
@@ -73,7 +71,7 @@ fun HistoryDetailsScreen(navController: NavController, sleepId: String?) {
                     Text(text = "Humidity: ${log.humidity}%")
                     Text(text = "Precipitation: ${log.precip}mm")
                     Text(text = "Weather Condition: ${log.weatherCondition}")
-                    Text(text = "Noise Level: ${log.noise} dB")
+                    Text(text = "Noise Level: %.2f dB".format(log.noise))
                 }
             }
 
@@ -89,17 +87,3 @@ fun HistoryDetailsScreen(navController: NavController, sleepId: String?) {
     }
 }
 
-
-suspend fun getSleepLogById(sleepId: String): SleepLog? {
-    val db = Firebase.firestore
-    return try {
-        val doc = db.collection("sleeps")
-            .document(sleepId)
-            .get()
-            .await()
-        doc.toObject(SleepLog::class.java)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
-    }
-}

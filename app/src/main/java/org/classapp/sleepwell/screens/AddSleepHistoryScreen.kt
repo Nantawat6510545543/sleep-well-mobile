@@ -22,7 +22,7 @@ import org.classapp.sleepwell.navigations.Routes
 import org.classapp.sleepwell.utils.handleConfirmClick
 import org.classapp.sleepwell.utils.hasPermission
 import org.classapp.sleepwell.utils.loadModel
-import org.classapp.sleepwell.utils.runSentimentModel
+import org.classapp.sleepwell.utils.predictSentiment
 import org.classapp.sleepwell.utils.validateSleepInput
 
 @Composable
@@ -98,7 +98,7 @@ fun AddSleepHistoryScreen(navController: NavController) {
             Button(onClick = {
                 scope.launch {
                     // Run Sentiment Analysis using the helper function
-                    val sentimentScore = runSentimentModel(context, sentimentModelSession, sleepComment)
+                    val sentimentScore = predictSentiment(context, sleepComment)
 
                     // Log the Sentiment result
                     Log.d("SentimentAnalysis", "Sentiment Result: $sentimentScore")

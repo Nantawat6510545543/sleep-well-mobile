@@ -71,7 +71,7 @@ fun HomeScreen(navController: NavController) {
                 }
             }
         }
-
+        Spacer(modifier = Modifier.height(60.dp))
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Just had a sleep?", fontSize = 24.sp)
             Spacer(modifier = Modifier.height(8.dp))

@@ -4,6 +4,7 @@ import ai.onnxruntime.OnnxTensor
 import ai.onnxruntime.OrtEnvironment
 import ai.onnxruntime.OrtSession
 import android.content.Context
+import androidx.compose.runtime.remember
 
 
 fun loadModel(context: Context, modelPath: String): OrtSession {
@@ -14,15 +15,16 @@ fun loadModel(context: Context, modelPath: String): OrtSession {
     return environment.createSession(modelBytes)
 }
 
-fun runSentimentModel(context: Context, session: OrtSession, input: String): Float {
+fun predictSentiment(context: Context, input: String): Float {
+    val sentimentModelSession = loadModel(context, "sentiment_analysis_model.onnx")
     val env = OrtEnvironment.getEnvironment()
     test(context)
     // Model expects tensor(string), so pass a string array
     val tensor = OnnxTensor.createTensor(env, arrayOf(input))
 
     // Run inference on the model
-    val inputName = session.inputNames.first()  // Get the input name
-    val result = session.run(mapOf(inputName to tensor))
+    val inputName = sentimentModelSession.inputNames.first()  // Get the input name
+    val result = sentimentModelSession.run(mapOf(inputName to tensor))
 
     // Assuming the second output contains the class probabilities (scale between 0 and 1)
     val prob = (result[1].value as Array<FloatArray>)[0][1]  // Class 1 probability
