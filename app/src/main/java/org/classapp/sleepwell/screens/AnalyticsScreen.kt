@@ -43,7 +43,6 @@ fun AnalyticsScreen() {
             sleepEntries = fetchSleepAnalyticsData(uid)
             sleepLogs = fetchSleepLog(uid)
 
-            // Once the data is fetched, set loading state to false
             isLoading = false
         }
     }

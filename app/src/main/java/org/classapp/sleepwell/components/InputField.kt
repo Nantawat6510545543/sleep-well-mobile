@@ -19,7 +19,7 @@ fun NumericInputField(
     OutlinedTextField(
         value = value?.toString() ?: "",
         onValueChange = {
-            val newValue = it.toIntOrNull()  // Convert string input to Int or null
+            val newValue = it.toIntOrNull()
             onValueChange(newValue)  // Pass updated value to the parent
         },
         label = { Text(label) },

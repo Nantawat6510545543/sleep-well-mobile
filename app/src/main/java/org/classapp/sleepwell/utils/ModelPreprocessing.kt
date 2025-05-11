@@ -5,7 +5,10 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
 import java.lang.reflect.Type
+import org.json.JSONObject
+import java.io.InputStream
 
+data class ScalerParams(val mean: List<Double>, val scale: List<Double>)
 
 // Function to process the input map, check for the weather condition, and update the map if necessary
 fun encodeWeatherCondition(context: Context, condition: String): Int {
@@ -28,7 +31,7 @@ fun encodeWeatherCondition(context: Context, condition: String): Int {
         mutableMapOf()
     }
 
-//    Reset value:
+//    Reset value: (Copy from weather_label_encoding.json)
 //    val conditionTextMap = mapOf(
 //        "Clear" to 0,
 //        "Thundery outbreaks possible" to 1,
@@ -37,7 +40,7 @@ fun encodeWeatherCondition(context: Context, condition: String): Int {
 //        "Sunny" to 4,
 //        "Light drizzle" to 5,
 //        "Cloudy" to 6,
-//    "Partly Cloudy" to 7
+//        "Partly Cloudy" to 7
 //    )
 
     // Encode condition using getOrPut — if not found, assign a new ID
@@ -50,4 +53,33 @@ fun encodeWeatherCondition(context: Context, condition: String): Int {
     return encodedCondition
 //    Debug Print
 //    println("Encoded condition_text: $condition = $encodedCondition")
+}
+
+fun loadScalerParamsFromAssets(context: Context): ScalerParams {
+    // Open the JSON file from assets
+    val inputStream: InputStream = context.assets.open("scaler_params.json")
+
+    // Read the file into a string
+    val jsonString = inputStream.bufferedReader().use { it.readText() }
+
+    // Parse the JSON string
+    val jsonObject = JSONObject(jsonString)
+    val mean = jsonObject.getJSONArray("mean").let {
+        (0 until it.length()).map { i -> it.getDouble(i) }
+    }
+    val scale = jsonObject.getJSONArray("scale").let {
+        (0 until it.length()).map { i -> it.getDouble(i) }
+    }
+
+    return ScalerParams(mean, scale)
+}
+
+fun standardizeFeature(featureValue: Float, mean: Float, scale: Float): Float {
+    return (featureValue - mean) / scale
+}
+
+fun standardizeFeatures(features: List<Float>, scalerParams: ScalerParams): List<Float> {
+    return features.zip(scalerParams.mean.zip(scalerParams.scale)) { feature, (mean, scale) ->
+        standardizeFeature(feature, mean.toFloat(), scale.toFloat())
+    }
 }

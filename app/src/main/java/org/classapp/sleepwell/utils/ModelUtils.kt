@@ -33,27 +33,12 @@ fun predictSentiment(context: Context, input: String): Double {
     return sentimentScore.toDouble()
 }
 
-// TODO: compute meaningful score
-fun predictSleepScore(context: Context, feature: SleepFeature): Double {
+fun predictSleepScore(context: Context, feature: List<Float>): Double {
     val sleepModelSession = loadModel(context, "sleep_model.onnx")
     val env = OrtEnvironment.getEnvironment()
 
-    // Prepare the feature data as an array of doubles (matching the data types)
-    val inputFeatures = arrayOf(
-        floatArrayOf(
-            feature.gender.toFloat(),
-            feature.age.toFloat(),
-            feature.height.toFloat(),
-            feature.weight.toFloat(),
-            feature.temp_c.toFloat(),
-            feature.condition_text.toFloat(),
-            feature.precip_mm.toFloat(),
-            feature.humidity.toFloat(),
-            feature.noise.toFloat(),
-            feature.sleep_duration.toFloat(),
-            feature.sentiment.toFloat()
-        )
-    )
+    // Prepare the feature data as an array of float
+    val inputFeatures = arrayOf(feature.toFloatArray())
 
     val inputTensor = try {
         OnnxTensor.createTensor(env, inputFeatures)

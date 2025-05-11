@@ -32,20 +32,6 @@ data class SleepLog(
     val noise: Double = 0.0
 )
 
-data class SleepFeature(
-    val gender: Int,
-    val age: Int,
-    val height: Int,
-    val weight: Double,
-    val temp_c: Double,
-    val condition_text: Int,
-    val precip_mm: Double,
-    val humidity: Double,
-    val noise: Double,
-    val sleep_duration: Double,
-    val sentiment: Double
-)
-
 fun convertToTimestamp(sleepTime: String): Timestamp? {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
     return try {
@@ -108,21 +94,24 @@ suspend fun handleConfirmClick(
             else -> 2 // For "Others" or any other gender
         }
 
-        val features = SleepFeature(
-            gender = genderInt,
-            age = userInfo.age!!,
-            height = userInfo.height!!,
-            weight = userInfo.weight!!.toDouble(),
-            temp_c = flattened.temp_c,
-            condition_text = encodeWeatherCondition(context, flattened.condition_text),
-            precip_mm = flattened.precip_mm,
-            humidity = flattened.humidity.toDouble(),
-            noise = averageDecibel,
-            sleep_duration = duration.toDouble(),
-            sentiment = predictSentiment(context, sleepComment)
+        val rawFeatures = listOf(
+            genderInt.toFloat(),
+            userInfo.age!!.toFloat(),
+            userInfo.height!!.toFloat(),
+            userInfo.weight!!.toFloat(),
+            flattened.temp_c.toFloat(),
+            encodeWeatherCondition(context, flattened.condition_text).toFloat(),
+            flattened.precip_mm.toFloat(),
+            flattened.humidity.toFloat(),
+            averageDecibel.toFloat(),
+            duration.toFloat(),
+            predictSentiment(context, sleepComment).toFloat()
         )
 
-//        Log.e("feature", features.toString())
+        val scalerParams = loadScalerParamsFromAssets(context)
+        val standardizedFeatures = standardizeFeatures(rawFeatures, scalerParams)
+
+        Log.e("feature", standardizedFeatures.toString())
 
         val sleepLog = SleepLog(
             userId = userId,
@@ -130,7 +119,7 @@ suspend fun handleConfirmClick(
             duration = duration.toDouble(),
             sleepComment = sleepComment,
             noise = averageDecibel,
-            sleepScore = predictSleepScore(context, features),
+            sleepScore = predictSleepScore(context, standardizedFeatures),
             place = flattened.location_name,
             tempC = flattened.temp_c,
             humidity = flattened.humidity,

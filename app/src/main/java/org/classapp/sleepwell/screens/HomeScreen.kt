@@ -63,7 +63,7 @@ fun HomeScreen(navController: NavController) {
 
                 if (sleepLog != null) {
                     Text("You slept ${sleepLog!!.duration}h last night.", fontSize = 16.sp)
-                    Text("Your sleep score: ${sleepLog!!.sleepScore}", fontSize = 16.sp)
+                    Text("Your sleep score: %.4f".format(sleepLog!!.sleepScore), fontSize = 16.sp)
                     Text("Comment: ${sleepLog!!.sleepComment}", fontSize = 16.sp)
                     Text("Weather: ${sleepLog!!.weatherCondition}, ${sleepLog!!.tempC}°C, Humidity: ${sleepLog!!.humidity}%", fontSize = 16.sp)
                 } else {
