@@ -1,7 +1,6 @@
 package org.classapp.sleepwell.screens
 
 import android.Manifest
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,7 +12,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.classapp.sleepwell.components.DateTimePickerButton
 import org.classapp.sleepwell.components.DateTimePickerDialog
@@ -21,8 +22,6 @@ import org.classapp.sleepwell.components.DecibelMeterSection
 import org.classapp.sleepwell.navigations.Routes
 import org.classapp.sleepwell.utils.handleConfirmClick
 import org.classapp.sleepwell.utils.hasPermission
-import org.classapp.sleepwell.utils.loadModel
-import org.classapp.sleepwell.utils.predictSentiment
 import org.classapp.sleepwell.utils.validateSleepInput
 
 @Composable
@@ -32,20 +31,20 @@ fun AddSleepHistoryScreen(navController: NavController) {
     var sleepComment by remember { mutableStateOf("") }
     var showDateTimePicker by remember { mutableStateOf(false) }
 
-    // for error handling
     var consentChecked by remember { mutableStateOf(false) }
     var showValidationError by remember { mutableStateOf(false) }
     var validationMessage by remember { mutableStateOf("") }
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val locationPermissionGranted = hasPermission(
-        context, Manifest.permission.ACCESS_FINE_LOCATION)
+
+    val locationPermissionGranted = hasPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+    val audioPermissionGranted = hasPermission(context, Manifest.permission.RECORD_AUDIO)
 
     var averageDecibel by remember { mutableStateOf<Double?>(null) }
     var isRecording by remember { mutableStateOf(false) }
-
-    val audioPermissionGranted = hasPermission(context, Manifest.permission.RECORD_AUDIO)
+    var hasRecorded by remember { mutableStateOf(false) }
+    var recordingSavedMessage by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -91,39 +90,21 @@ fun AddSleepHistoryScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // TODO TEMP
-            val scope = rememberCoroutineScope()
-            Button(onClick = {
-                scope.launch {
-                    // Run Sentiment Analysis using the helper function
-                    val sentimentScore = predictSentiment(context, sleepComment)
-
-                    // Log the Sentiment result
-                    Log.d("SentimentAnalysis", "Sentiment Result: $sentimentScore")
-                }
-            }) {
-                Text("Analyze")
-            }
-
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Data privacy checkbox
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
                     checked = consentChecked,
-                    onCheckedChange = {
-                        consentChecked = it
-                    }
+                    onCheckedChange = { consentChecked = it }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "By clicking, you consent to us collecting " +
-                            "your location and noise data for analytics"
+                    text = "By clicking, you consent to us collecting your location and noise data for analytics"
                 )
             }
 
             if (showValidationError) {
-                Spacer(modifier = Modifier.height(8.dp))  // Adds some space before the message
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = validationMessage,
                     color = Color.Red,
@@ -132,7 +113,7 @@ fun AddSleepHistoryScreen(navController: NavController) {
             }
         }
 
-        // Start/Stop Recording Button with Icon
+        // Recording Controls
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
@@ -143,25 +124,52 @@ fun AddSleepHistoryScreen(navController: NavController) {
                 style = MaterialTheme.typography.bodyMedium
             )
             Button(
-                onClick = { isRecording = !isRecording },
+                onClick = {
+                    isRecording = !isRecording
+                    if (!isRecording && hasRecorded) {
+                        recordingSavedMessage = true
+                        hasRecorded = false
+                        coroutineScope.launch {
+                            delay(3000)
+                            recordingSavedMessage = false
+                        }
+                    }
+                },
                 enabled = audioPermissionGranted,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = if (isRecording) "Stop Audio Recording" else "Start Audio Recording"
-                )
+                Text(text = if (isRecording) "Stop Audio Recording" else "Start Audio Recording")
             }
         }
 
-        DecibelMeterSection (
+        // Decibel meter
+        DecibelMeterSection(
             audioPermissionGranted = audioPermissionGranted,
             recording = isRecording,
             onAverageDecibelComputed = { average ->
                 averageDecibel = average
+                hasRecorded = true
             }
         )
 
+        // Show message if recording is saved
+        if (recordingSavedMessage) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Recording saved successfully!",
+                    fontSize = 18.sp,
+                    color = Color(0xFF2E7D32) // Dark green
+                )
+            }
+        }
+
+        // Confirm Button
         Button(
             onClick = {
                 val result = validateSleepInput(
@@ -185,8 +193,6 @@ fun AddSleepHistoryScreen(navController: NavController) {
                                 hasGeoPermission = locationPermissionGranted,
                                 averageDecibel = it
                             )
-
-                            // Show success toast and navigate to HistoryScreen
                             Toast.makeText(context, "Data added successfully", Toast.LENGTH_SHORT).show()
                             navController.navigate(Routes.HISTORY)
                         }
